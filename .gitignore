@@ -1,0 +1,14 @@
+# Preferred as GitHub releases
+main.js
+# IDE files
+.vscode
+*.iml
+.idea
+# npm
+node_modules
+# Excluding sourcemaps
+*.map
+# Obsidian
+data.json
+# Clearing off macOS Finder View States
+.DS_Store
