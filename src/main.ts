@@ -11,12 +11,16 @@ import {
 import {
     CreateDeckModal
 } from "./Modals";
+import {
+    requestPermission
+} from "./AnkiConnect";
 
 export default class AnkiIntegration extends Plugin {
     settings: AnkiIntegrationSettings;
 
     async onload() {
         await this.loadSetting();
+        await requestPermission();
 
         // Adding the setting tab the user can use to edit settings.
         this.addSettingTab(new AnkiIntegrationSettingTab(this.app, this));
