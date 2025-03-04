@@ -1,0 +1,23 @@
+.ankiIntegrationModal__h1--margin {
+    margin-top: 0;
+}
+
+.ankiIntegrationModal__h1--text-align {
+    text-align: center;
+}
+
+.ankiIntegrationModal__input--width {
+    width: 100%;
+}
+
+.ankiIntegrationModal__button--width {
+    width: 40%;
+}
+
+.ankiIntegrationModal__button--margin {
+    margin: 16px 30% 0;
+}
+
+.ankiIntegrationModal__button--padding {
+    padding: 4px 0;
+}

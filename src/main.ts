@@ -7,7 +7,10 @@ import {
     AnkiIntegrationSettings,
     DEFAULT_SETTINGS,
     AnkiIntegrationSettingTab
-} from "./AnkiIntegrationSettingTab"
+} from "./AnkiIntegrationSettingTab";
+import {
+    CreateDeckModal
+} from "./Modals";
 
 export default class AnkiIntegration extends Plugin {
     settings: AnkiIntegrationSettings;
@@ -16,7 +19,16 @@ export default class AnkiIntegration extends Plugin {
         await this.loadSetting();
 
         // Adding the setting tab the user can use to edit settings.
-        this.addSettingTab(new AnkiIntegrationSettingTab(this.app, this))
+        this.addSettingTab(new AnkiIntegrationSettingTab(this.app, this));
+
+        // Adding a command to open the CreateDeckModal.
+        this.addCommand({
+           id: 'create-a-new-deck',
+           name: 'Create a new deck',
+           callback: () => {
+               new CreateDeckModal(this.app).open();
+           }
+        });
     }
 
     async onunload() {
