@@ -2,7 +2,7 @@
   "name": "obsidian-anki-integration",
   "version": "1.0.0",
   "description": "An Obsidian Plugin allowing to create Anki Flashcards in different ways.",
-  "main": "dist/main.js",
+  "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
