@@ -39,3 +39,8 @@ export async function requestPermission(): Promise<any> {
     }
     return r;
 }
+
+// Creating an Anki Deck
+export async function CreateDeck(deckName: String) {
+    return await Invoke("createDeck", {"deck": deckName});
+}

@@ -1,6 +1,10 @@
 import {
-    App, ButtonComponent, Modal
+    App, Modal, Notice
 } from "obsidian";
+import {
+    Invoke,
+    CreateDeck
+} from "./AnkiConnect";
 
 export class CreateDeckModal extends Modal {
     constructor(app: App) {
@@ -35,7 +39,14 @@ export class CreateDeckModal extends Modal {
                 "ankiIntegrationModal__button--padding"
             ]
         }).addEventListener("click", () => {
-            this.close();
+            const deckName = inputEl.value;
+            if (deckName === "") {
+                new Notice("Please enter a name for your deck.");
+                return;
+            } else {
+                CreateDeck(deckName);
+                this.close();
+            }
         })
     }
 
