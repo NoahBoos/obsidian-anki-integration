@@ -1,3 +1,6 @@
+import {
+    Notice
+} from "obsidian";
 const ANKI_PORT = 8765;
 
 export function Invoke(action: string, params={}) {
@@ -32,12 +35,25 @@ export function Invoke(action: string, params={}) {
 
 // Asking permission
 export async function requestPermission(): Promise<any> {
-    let r = await Invoke("requestPermission", {});
-    // @ts-ignore
-    if (r.permission != "granted") {
-        return new Promise((resolve, reject) => {throw 'Permission to access anki was denied';});
+    try {
+        let r = await Invoke("requestPermission", {});
+        // @ts-ignore
+        if (!r || r.permission != "granted") {
+            new Notice(
+                "Permission to access Anki was denied."
+                + "\n"
+                + "Check the documentation for more information.");
+            return null;
+        }
+        new Notice("Permission to access Anki was granted.");
+        return r;
+    } catch (error) {
+        new Notice(
+            "Failed to request the permission."
+            + "\n"
+            + "Please make sure that Anki is running.");
+        return null;
     }
-    return r;
 }
 
 // Creating an Anki Deck

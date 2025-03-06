@@ -1,5 +1,8 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import AnkiIntegration from "./main";
+import {
+    requestPermission
+} from "./AnkiConnect";
 
 // Anki Integration Settings declaration
 export interface AnkiIntegrationSettings {
@@ -24,24 +27,15 @@ export class AnkiIntegrationSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        // Adding a setting to the setting tab.
+        // Adding the connection button
         new Setting(containerEl)
-            // Name
-            .setName("My setting")
-            // Description
-            .setDesc("This is the description of My Setting.")
-            // Input field
-            .addText(text => text
-                // Placeholder text
-                .setPlaceholder("Enter your value")
-                // Default value in the input field
-                .setValue(this.plugin.settings.mySetting)
-                // Code to execute when changing the value of the input field
-                .onChange(async (value) => {
-                    // Overwriting the setting in the settings object of the plugin.
-                    this.plugin.settings.mySetting = value;
-                    // Saving settings in "data.json" thanks to "saveSetting()".
-                    await this.plugin.saveSetting();
+            .setName("Connect Obsidian to Anki")
+            .setDesc("Click this button to connect Obsidian to Anki. Make sure that your Anki App is running before attempting to connect.")
+            .addButton((button) => button
+                .setButtonText("Connect")
+                .setCta()
+                .onClick(async () => {
+                    await requestPermission();
                 }))
     }
 }
