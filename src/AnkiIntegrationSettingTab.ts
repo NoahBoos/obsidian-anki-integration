@@ -1,7 +1,7 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import AnkiIntegration from "./main";
 import {
-    requestPermission
+    RequestPermission
 } from "./AnkiConnect";
 
 // Anki Integration Settings declaration
@@ -35,7 +35,7 @@ export class AnkiIntegrationSettingTab extends PluginSettingTab {
                 .setButtonText("Connect")
                 .setCta()
                 .onClick(async () => {
-                    await requestPermission();
+                    await RequestPermission();
                 }))
     }
 }

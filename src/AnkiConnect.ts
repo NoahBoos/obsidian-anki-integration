@@ -34,24 +34,26 @@ export function Invoke(action: string, params={}) {
 }
 
 // Asking permission
-export async function requestPermission(): Promise<any> {
+export async function RequestPermission(): Promise<any> {
     try {
-        let r = await Invoke("requestPermission", {});
+        const result = await Invoke("requestPermission", {});
         // @ts-ignore
-        if (!r || r.permission != "granted") {
+        if (!result || result.permission != "granted") {
             new Notice(
                 "Permission to access Anki was denied."
                 + "\n"
-                + "Check the documentation for more information.");
+                + "Check the documentation for more information."
+            );
             return null;
         }
         new Notice("Permission to access Anki was granted.");
-        return r;
+        return result;
     } catch (error) {
         new Notice(
             "Failed to request the permission."
             + "\n"
-            + "Please make sure that Anki is running.");
+            + "Please make sure that Anki is running."
+        );
         return null;
     }
 }
