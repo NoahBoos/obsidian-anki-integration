@@ -2,7 +2,6 @@ import {
     App, Modal, Notice
 } from "obsidian";
 import {
-    Invoke,
     CreateDeck
 } from "./AnkiConnect";
 
@@ -38,14 +37,15 @@ export class CreateDeckModal extends Modal {
                 "ankiIntegrationModal__button--margin",
                 "ankiIntegrationModal__button--padding"
             ]
-        }).addEventListener("click", () => {
+        }).addEventListener("click", async () => {
             const deckName = inputEl.value;
-            if (deckName === "") {
-                new Notice("Please enter a name for your deck.");
+            const result = await CreateDeck(deckName);
+            if (result === false) {
+                // If the deck hasn't been created, we do not close the modal.
                 return;
             } else {
-                CreateDeck(deckName);
-                this.close();
+                //  Else, we close it.
+                this.close()
             }
         })
     }

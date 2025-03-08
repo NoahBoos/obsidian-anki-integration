@@ -57,6 +57,27 @@ export async function requestPermission(): Promise<any> {
 }
 
 // Creating an Anki Deck
-export async function CreateDeck(deckName: String) {
-    return await Invoke("createDeck", {"deck": deckName});
+export async function CreateDeck(deckName: string) {
+    // Checking if the deck name is empty.
+    if (deckName === "") {
+        // We can't create a nameless deck, so we display a Notice informing the user that he needs to provide us a deck name.
+        new Notice("Please enter a name for your deck.");
+        // We can't create a nameless deck, therefore we return false and stop the process.
+        return false;
+    }
+    try {
+        await Invoke("createDeck", {"deck": deckName});
+        // We created the deck, so we display a Notice informing the user that his deck has been successfully created.
+        new Notice("Deck " + deckName + " has been created.");
+        // We successfully managed to create the deck, therefore we return true.
+        return true;
+    } catch (error) {
+        // We met an error, so we display a Notice informing the user that the deck creation process has been stopped.
+        new Notice("Failed to create the deck " + deckName
+            + ".\n" + error
+            + "\n" + "Make sure Anki is running."
+        );
+        // We did not manage to create the deck, therefore we return false.
+        return false;
+    }
 }
