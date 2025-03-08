@@ -1,17 +1,20 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import AnkiIntegration from "./main";
 import {
-    RequestPermission
+    RequestPermission,
+    SynchronizeData
 } from "./AnkiConnect";
 
 // Anki Integration Settings declaration
 export interface AnkiIntegrationSettings {
     mySetting: string;
+    ankiData: Object;
 }
 
 // Anki Integration Settings default value
 export const DEFAULT_SETTINGS: AnkiIntegrationSettings = {
-    mySetting: "default value"
+    mySetting: "default value",
+    ankiData: {}
 }
 
 export class AnkiIntegrationSettingTab extends PluginSettingTab {
@@ -36,6 +39,16 @@ export class AnkiIntegrationSettingTab extends PluginSettingTab {
                 .setCta()
                 .onClick(async () => {
                     await RequestPermission();
+                }))
+        // Adding the synchronization button
+        new Setting(containerEl)
+            .setName("Synchronize data between Obsidian and Anki")
+            .setDesc("Click this button to synchronize data between Obsidian and Anki. Make sure that your Anki App is running before attempting to synchronize.")
+            .addButton((button) => button
+                .setButtonText("Synchronize")
+                .setCta()
+                .onClick(async () => {
+                    await SynchronizeData(this.plugin);
                 }))
     }
 }

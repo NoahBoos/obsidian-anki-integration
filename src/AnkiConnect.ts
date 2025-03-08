@@ -1,6 +1,8 @@
 import {
-    Notice
+    Notice,
+    Plugin
 } from "obsidian";
+import AnkiIntegration from "./main";
 const ANKI_PORT = 8765;
 
 export function Invoke(action: string, params={}) {
@@ -53,6 +55,40 @@ export async function RequestPermission(): Promise<any> {
             "Failed to request the permission."
             + "\n"
             + "Please make sure that Anki is running."
+        );
+        return null;
+    }
+}
+
+// Synchronize data between Obsidian and Anki
+export async function SynchronizeData(plugin: AnkiIntegration) {
+    const decksData = await GetDecksData();
+    plugin.settings.ankiData["decksData"] = decksData;
+    await plugin.saveSetting();
+}
+
+// Get decks-related data.
+async function GetDecksData() {
+    try {
+        const result: any = await Invoke("deckNamesAndIds", {});
+        // Checking if there is no result coming of the request.
+        if (!result) {
+            // The user has no decks, so we inform them that no decks have been found.
+            new Notice(
+                "No decks were found."
+                + "\n" + "Create a deck to synchronize deck data."
+            );
+            return null;
+        }
+        // Decks-related data has been synchronized successfully, so we inform the user that Decks have been synchronized.
+        new Notice ("Decks have been synchronized.");
+        return result;
+    } catch (error) {
+        // We can't get decks-related data, so we display a Notice stating that we failed to synchronize decks-related data, along with the error.
+        new Notice(
+            "Failed to synchronize decks."
+            + "\n" + error
+            + "\n" + "Please make sure that Anki is running."
         );
         return null;
     }
