@@ -157,6 +157,22 @@ export class AddNoteModal extends Modal {
                 "ankiIntegrationModal__button--margin",
                 "ankiIntegrationModal__button--padding"
             ]
+        }).addEventListener("click", async () => {
+            if (deckSelector.getValue() === "default") {
+                new Notice("Please select a deck.");
+                return;
+            }
+            if (modelSelector.getValue() === "default") {
+                new Notice("Please select a model.");
+                return;
+            }
+            const inputFields = inputContainer.querySelectorAll("input");
+            for (let i = 0; i < 2; i++) {
+                if (inputFields[i].value === "") {
+                    new Notice("Please fill the two first fields, at least.")
+                    return;
+                }
+            }
         })
     }
 
