@@ -9,7 +9,8 @@ import {
     AnkiIntegrationSettingTab
 } from "./AnkiIntegrationSettingTab";
 import {
-    CreateDeckModal
+    CreateDeckModal,
+    AddNoteModal
 } from "./Modals";
 import {
     RequestPermission,
@@ -27,6 +28,14 @@ export default class AnkiIntegration extends Plugin {
         // Adding the setting tab the user can use to edit settings.
         this.addSettingTab(new AnkiIntegrationSettingTab(this.app, this));
 
+        // Adding a command to launch SynchronizeData().
+        this.addCommand({
+            id: 'synchronize-data',
+            name: 'Synchronize data with Anki',
+            callback: () => {
+                SynchronizeData(this);
+            }
+        })
         // Adding a command to open the CreateDeckModal.
         this.addCommand({
            id: 'create-a-new-deck',
@@ -35,12 +44,12 @@ export default class AnkiIntegration extends Plugin {
                new CreateDeckModal(this.app).open();
            }
         });
-        // Adding a command to launch SynchronizeData().
+        // Adding a command to open the AddNoteModal.
         this.addCommand({
-            id: 'synchronize-data',
-            name: 'Synchronize data with Anki',
+            id: 'add-a-new-note',
+            name: 'Add a new note',
             callback: () => {
-                SynchronizeData(this);
+                new AddNoteModal(this.app, this).open();
             }
         })
     }
