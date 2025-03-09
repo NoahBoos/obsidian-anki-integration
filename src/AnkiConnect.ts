@@ -62,8 +62,12 @@ export async function RequestPermission(): Promise<any> {
 
 // Synchronize data between Obsidian and Anki
 export async function SynchronizeData(plugin: AnkiIntegration) {
-    const decksData = await GetDecksData();
+    let decksData: Object;
+    decksData = await GetDecksData();
     plugin.settings.ankiData["decksData"] = decksData;
+    let modelsData: Object;
+    modelsData = await GetModelsData();
+    plugin.settings.ankiData["modelsData"] = modelsData;
     await plugin.saveSetting();
 }
 
@@ -97,16 +101,32 @@ async function GetDecksData() {
 // Get models-related data.
 async function GetModelsData() {
     try {
-        // const result: Object = {};
-        const result: any = await Invoke("modelNamesAndIds", {});
+        let result: Object = {};
+        const modelNamesAndIds: any = await Invoke("modelNamesAndIds", {});
         // Checking if there is no result coming of the request.
-        if (!result) {
+        if (!modelNamesAndIds) {
             // The user has no models, so we inform them that no models have been found.
             new Notice(
                 "No models were found."
                 + "\n" + "Create a model to synchronize model data."
             );
             return null;
+        }
+        for (let i = 0; i < Object.values(modelNamesAndIds).length; i++) {
+            // Initializing a model Object.
+            let model: Object;
+            model = {
+                "name": Object.keys(modelNamesAndIds)[i],
+                "id": Object.values(modelNamesAndIds)[i]
+            };
+            // Initializing an Object that will store the data coming out of a request.
+            let modelFieldNames: Object;
+            // The request allow us to gather the name of each field of a model based on its name.
+            modelFieldNames = await Invoke("modelFieldNames", {"modelName": Object.keys(modelNamesAndIds)[i]});
+            // Adding the data resulting the request as the "field" attribute of the model Object.
+            model["fields"] = modelFieldNames;
+            // Adding the whole model Object to the result Object.
+            result["model" + i] = model;
         }
         // Models-related data has been synchronized successfully, so we inform the user that Models have been synchronized.
         new Notice ("Models have been synchronized.");
