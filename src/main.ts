@@ -35,6 +35,14 @@ export default class AnkiIntegration extends Plugin {
                new CreateDeckModal(this.app).open();
            }
         });
+        // Adding a command to launch SynchronizeData().
+        this.addCommand({
+            id: 'synchronize-data',
+            name: 'Synchronize data with Anki',
+            callback: () => {
+                SynchronizeData(this);
+            }
+        })
     }
 
     async onunload() {
