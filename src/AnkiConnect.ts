@@ -62,12 +62,15 @@ export async function RequestPermission(): Promise<any> {
 
 // Synchronize data between Obsidian and Anki
 export async function SynchronizeData(plugin: AnkiIntegration) {
+    // Attempting to synchronize decks-related data.
     let decksData: Object;
     decksData = await GetDecksData();
-    plugin.settings.ankiData["decksData"] = decksData;
+    if (decksData !== null) plugin.settings.ankiData["decksData"] = decksData;
+    // Attempting to synchronize models-related data.
     let modelsData: Object;
     modelsData = await GetModelsData();
-    plugin.settings.ankiData["modelsData"] = modelsData;
+    if (modelsData !== null) plugin.settings.ankiData["modelsData"] = modelsData;
+    // Saving settings.
     await plugin.saveSetting();
 }
 
