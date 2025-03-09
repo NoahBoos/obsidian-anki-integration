@@ -94,6 +94,34 @@ async function GetDecksData() {
     }
 }
 
+// Get models-related data.
+async function GetModelsData() {
+    try {
+        // const result: Object = {};
+        const result: any = await Invoke("modelNamesAndIds", {});
+        // Checking if there is no result coming of the request.
+        if (!result) {
+            // The user has no models, so we inform them that no models have been found.
+            new Notice(
+                "No models were found."
+                + "\n" + "Create a model to synchronize model data."
+            );
+            return null;
+        }
+        // Models-related data has been synchronized successfully, so we inform the user that Models have been synchronized.
+        new Notice ("Models have been synchronized.");
+        return result;
+    } catch (error) {
+        // We can't get models-related data, so we display a Notice stating that we failed to synchronize models-related data, along with the error.
+        new Notice(
+            "Failed to synchronize models."
+            + "\n" + error
+            + "\n" + "Please make sure that Anki is running."
+        );
+        return null;
+    }
+}
+
 // Creating an Anki Deck
 export async function CreateDeck(deckName: string) {
     // Checking if the deck name is empty.
