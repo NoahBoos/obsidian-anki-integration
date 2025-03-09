@@ -6,7 +6,18 @@
     text-align: center;
 }
 
+.ankiIntegrationModal__inputContainer--flex,
+.ankiIntegrationModal__dropdownContainer--flex {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .ankiIntegrationModal__input--width {
+    width: 100%;
+}
+
+.ankiIntegrationModal__dropdown--width {
     width: 100%;
 }
 
@@ -20,4 +31,8 @@
 
 .ankiIntegrationModal__button--padding {
     padding: 4px 0;
+}
+
+.ankiIntegrationModal__paragraph--text-align {
+    text-align: center;
 }
