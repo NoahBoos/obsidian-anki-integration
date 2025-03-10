@@ -99,6 +99,15 @@ export function AddDropdown(parent: HTMLElement, defaultString: string, classes:
     return createdEl;
 }
 
+// Adding all the inputs of a saved dataset to a given DropdownComponent.
+export function AddInputsToDropdownFromDataset(parent: DropdownComponent, keys: string[], valueKey: string, placeholderKey:string, where: Object) {
+    for (const key of keys) {
+        const inputValue = where[key][valueKey];
+        const inputPlaceholder = where[key][placeholderKey];
+        parent.addOption(inputValue, inputPlaceholder)
+    }
+}
+
 // Adding an input to a given HTMLElement.
 export function AddInput(parent: HTMLElement, type: string, placeholder: string = "", classes: string[] = []) {
     // Pushing into classes[] all mandatory classes.
