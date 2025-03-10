@@ -6,7 +6,14 @@ import {
 } from "./AnkiConnect";
 import AnkiIntegration from "./main";
 import {
-    GetModelByName
+    GetModelByName,
+    AddContainer,
+    AddTitle,
+    AddSubtitle,
+    AddParagraph,
+    AddDropdown,
+    AddInput,
+    AddButton
 } from "./utils";
 
 export class CreateDeckModal extends Modal {
@@ -17,31 +24,12 @@ export class CreateDeckModal extends Modal {
     onOpen() {
         const {contentEl} = this;
         // Adding the title of the modal
-        contentEl.createEl("h1", {
-            text: "Create a new deck",
-            cls: [
-                "ankiIntegrationModal__h1--width",
-                "ankiIntegrationModal__h1--text-align"
-            ]
-        })
+        AddTitle(contentEl, "Create a new deck");
         // Adding the input of the modal
-        const inputEl = contentEl.createEl("input", {
-            type: "text",
-            placeholder: "Enter the name of your new deck.",
-            cls: [
-                "ankiIntegrationModal__input--width"
-            ]
-        })
+        const inputEl = AddInput(contentEl, "text", "Enter the name of your new deck.");
         // Adding the submitting button
-        contentEl.createEl("button", {
-            text: "Create deck",
-            attr: {type: "submit"},
-            cls: [
-                "ankiIntegrationModal__button--width",
-                "ankiIntegrationModal__button--margin",
-                "ankiIntegrationModal__button--padding"
-            ]
-        }).addEventListener("click", async () => {
+        const submitButtonEl = AddButton(contentEl, "Create a new deck", "submit");
+        submitButtonEl.addEventListener("click", async () => {
             const deckName = inputEl.value;
             const result = await CreateDeck(deckName);
             if (result === false) {
@@ -71,43 +59,31 @@ export class AddNoteModal extends Modal {
         const ankiData: Object = this.plugin.settings.ankiData;
         const {contentEl} = this;
         // Adding the title of the modal.
-        contentEl.createEl("h1", {
-            text: "Create a new flashcard",
-            cls: [
-                "ankiIntegrationModal__h1--margin",
-                "ankiIntegrationModal__h1--text-align"
-            ]
-        })
+        AddTitle(contentEl, "Create a new note")
         // Adding subtitle.
-        contentEl.createEl("h2", {
-            text: "Deck and Model"
-        })
+        AddSubtitle(contentEl, "Deck & Model")
         // Adding the deck & model selectors container.
-        const dropdownContainer = contentEl.createEl("div", {
-            cls: [
-                "ankiIntegrationModal__dropdownContainer--flex",
-            ]
-        })
+        const dropdownContainer = AddContainer(contentEl);
         // Adding the deck selector.
-        const deckSelector = new DropdownComponent(dropdownContainer);
-        deckSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
-        deckSelector.addOption("default", "Choose a deck");
+        const deckSelector = AddDropdown(dropdownContainer, "Choose a deck");
+        // const deckSelector = new DropdownComponent(dropdownContainer);
+        // deckSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
+        // deckSelector.addOption("default", "Choose a deck");
         for (const deck in ankiData["decksData"]) {
             deckSelector.addOption(deck, deck);
         }
         // Adding the model selector.
-        const modelSelector = new DropdownComponent(dropdownContainer);
-        modelSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
-        modelSelector.addOption("default", "Choose a model");
+        const modelSelector = AddDropdown(dropdownContainer, "Choose a model");
+        // const modelSelector = new DropdownComponent(dropdownContainer);
+        // modelSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
+        // modelSelector.addOption("default", "Choose a model");
         for (let i = 0; i < Object.values(ankiData["modelsData"]).length; i++) {
             const modelKey = "model" + i;
             const model = ankiData["modelsData"][modelKey];
             modelSelector.addOption(model["name"], model["name"]);
         }
         // Adding subtitle.
-        contentEl.createEl("h2", {
-            text: "Fields"
-        })
+        AddSubtitle(contentEl, "Fields");
         // Adding the input fields container.
         const inputContainer = contentEl.createEl("div", {
             cls: [
@@ -115,24 +91,14 @@ export class AddNoteModal extends Modal {
             ]
         });
         // Adding the "Select a model..." message to display it by default.
-        inputContainer.createEl("p", {
-            "text": "Select a model to see its fields.",
-            "cls": [
-                "ankiIntegrationModal__paragraph--text-align"
-            ]
-        })
+        AddParagraph(inputContainer, "Select a model to see its fields.");
         // Adding the input fields.
         modelSelector.onChange(async (value) => {
             const selectedModel: Object = GetModelByName(this.plugin, value);
             inputContainer.empty();
             console.log(value);
             if (value === "default") {
-                inputContainer.createEl("p", {
-                    "text": "Select a model to see its fields.",
-                    "cls": [
-                        "ankiIntegrationModal__paragraph--text-align"
-                    ]
-                })
+                AddParagraph(inputContainer, "Select a model to see its fields.");
                 return;
             }
             for (const input of selectedModel["fields"]) {
