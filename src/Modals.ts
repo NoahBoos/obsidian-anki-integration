@@ -12,6 +12,7 @@ import {
     AddSubtitle,
     AddParagraph,
     AddDropdown,
+    AddInputsToDropdownFromDataset,
     AddInput,
     AddButton
 } from "./utils";
@@ -66,22 +67,14 @@ export class AddNoteModal extends Modal {
         const dropdownContainer = AddContainer(contentEl);
         // Adding the deck selector.
         const deckSelector = AddDropdown(dropdownContainer, "Choose a deck");
-        // const deckSelector = new DropdownComponent(dropdownContainer);
-        // deckSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
-        // deckSelector.addOption("default", "Choose a deck");
-        for (const deck in ankiData["decksData"]) {
-            deckSelector.addOption(deck, deck);
-        }
+        // Adding deck selector's options.
+        const deckKeys = Object.keys(ankiData["decksData"]);
+        AddInputsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
         // Adding the model selector.
         const modelSelector = AddDropdown(dropdownContainer, "Choose a model");
-        // const modelSelector = new DropdownComponent(dropdownContainer);
-        // modelSelector.selectEl.addClass("ankiIntegrationModal__dropdown--width");
-        // modelSelector.addOption("default", "Choose a model");
-        for (let i = 0; i < Object.values(ankiData["modelsData"]).length; i++) {
-            const modelKey = "model" + i;
-            const model = ankiData["modelsData"][modelKey];
-            modelSelector.addOption(model["name"], model["name"]);
-        }
+        // Adding model selector's options.
+        const modelKeys = Object.keys(ankiData["modelsData"]);
+        AddInputsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
         // Adding subtitle.
         AddSubtitle(contentEl, "Fields");
         // Adding the input fields container.
