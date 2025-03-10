@@ -77,15 +77,26 @@ export async function SynchronizeData(plugin: AnkiIntegration) {
 // Get decks-related data.
 async function GetDecksData() {
     try {
-        const result: any = await Invoke("deckNamesAndIds", {});
+        let result: Object = {};
+        const decksNamesAndIds: any = await Invoke("deckNamesAndIds", {});
         // Checking if there is no result coming of the request.
-        if (!result) {
+        if (!decksNamesAndIds) {
             // The user has no decks, so we inform them that no decks have been found.
             new Notice(
                 "No decks were found."
                 + "\n" + "Create a deck to synchronize deck data."
             );
             return null;
+        }
+        for (let i = 0; i < Object.values(decksNamesAndIds).length; i++) {
+            // Initializing an Object that will store the data coming out of a request.
+            let deck: Object;
+            deck = {
+                "name": Object.keys(decksNamesAndIds)[i],
+                "id": Object.values(decksNamesAndIds)[i]
+            }
+            // Copying the object into result{}.
+            result["deck" + i] = deck;
         }
         // Decks-related data has been synchronized successfully, so we inform the user that Decks have been synchronized.
         new Notice ("Decks have been synchronized.");
@@ -128,7 +139,7 @@ async function GetModelsData() {
             modelFieldNames = await Invoke("modelFieldNames", {"modelName": Object.keys(modelNamesAndIds)[i]});
             // Adding the data resulting the request as the "field" attribute of the model Object.
             model["fields"] = modelFieldNames;
-            // Adding the whole model Object to the result Object.
+            // Copying the object into result{}.
             result["model" + i] = model;
         }
         // Models-related data has been synchronized successfully, so we inform the user that Models have been synchronized.
