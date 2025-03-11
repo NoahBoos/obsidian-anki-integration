@@ -12,7 +12,7 @@ import {
     AddSubtitle,
     AddParagraph,
     AddDropdown,
-    AddInputsToDropdownFromDataset,
+    AddOptionsToDropdownFromDataset,
     AddInput,
     AddButton
 } from "./utils";
@@ -64,17 +64,19 @@ export class AddNoteModal extends Modal {
         // Adding subtitle.
         AddSubtitle(contentEl, "Deck & Model")
         // Adding the deck & model selectors container.
-        const dropdownContainer = AddContainer(contentEl);
+        const dropdownContainer = AddContainer(contentEl, [
+            "ankiIntegrationModal__dropdownContainer--flex"
+        ]);
         // Adding the deck selector.
         const deckSelector = AddDropdown(dropdownContainer, "Choose a deck");
         // Adding deck selector's options.
         const deckKeys = Object.keys(ankiData["decksData"]);
-        AddInputsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
+        AddOptionsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
         // Adding the model selector.
         const modelSelector = AddDropdown(dropdownContainer, "Choose a model");
         // Adding model selector's options.
         const modelKeys = Object.keys(ankiData["modelsData"]);
-        AddInputsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
+        AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
         // Adding subtitle.
         AddSubtitle(contentEl, "Fields");
         // Adding the input fields container.

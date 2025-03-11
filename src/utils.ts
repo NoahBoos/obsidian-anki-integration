@@ -14,9 +14,7 @@ export function GetModelByName(plugin: AnkiIntegration, name: string) {
 // Adding a container to a given HTMLElement.
 export function AddContainer(parent: HTMLElement, classes: string[] = []) {
     // Pushing into classes[] all mandatory classes.
-    classes.push(
-        "ankiIntegrationModal__dropdownContainer--flex"
-    );
+    classes.push();
     // Creating the div HTMLDivElement.
     let createdEl: HTMLDivElement;
     createdEl = parent.createEl("div", {
@@ -99,13 +97,29 @@ export function AddDropdown(parent: HTMLElement, defaultString: string, classes:
     return createdEl;
 }
 
-// Adding all the inputs of a saved dataset to a given DropdownComponent.
-export function AddInputsToDropdownFromDataset(parent: DropdownComponent, keys: string[], valueKey: string, placeholderKey:string, where: Object) {
+// Adding all the options of a saved dataset to a given DropdownComponent.
+export function AddOptionsToDropdownFromDataset(parent: DropdownComponent, keys: string[], valueKey: string, placeholderKey:string, where: Object) {
     for (const key of keys) {
-        const inputValue = where[key][valueKey];
-        const inputPlaceholder = where[key][placeholderKey];
-        parent.addOption(inputValue, inputPlaceholder)
+        const optionValue = where[key][valueKey];
+        const optionPlaceholder = where[key][placeholderKey];
+        parent.addOption(optionValue, optionPlaceholder)
     }
+}
+
+// Adding a label to a given HTMLElement.
+export function AddLabel(parent: HTMLElement, text: string, classes: string[] = []) {
+    // Pushing into classes[] all mandatory classes.
+    classes.push();
+    // Creating the label HTMLLabelElement.
+    let createdEl: HTMLLabelElement;
+    createdEl = parent.createEl("label", {
+        text: text,
+        cls: [
+            classes.join(" ")
+        ]
+    });
+    // Returning the input.
+    return createdEl;
 }
 
 // Adding an input to a given HTMLElement.
@@ -129,6 +143,13 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
     });
     // Returning the input.
     return createdEl;
+}
+
+export function AddFieldGroups(parent: HTMLElement, keys: string[]) {
+    for (const key of keys) {
+        AddLabel(parent, key);
+        AddInput(parent, "text", key);
+    }
 }
 
 // Adding a button to a given HTMLElement.
