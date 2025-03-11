@@ -14,6 +14,7 @@ import {
     AddDropdown,
     AddOptionsToDropdownFromDataset,
     AddInput,
+    AddFieldGroups,
     AddButton
 } from "./utils";
 
@@ -80,45 +81,24 @@ export class AddNoteModal extends Modal {
         // Adding subtitle.
         AddSubtitle(contentEl, "Fields");
         // Adding the input fields container.
-        const inputContainer = contentEl.createEl("div", {
-            cls: [
-                "ankiIntegrationModal__inputContainer--flex"
-            ]
-        });
+        const inputContainer = AddContainer(contentEl, [
+            "ankiIntegrationModal__inputContainer--flex"
+        ]);
         // Adding the "Select a model..." message to display it by default.
         AddParagraph(inputContainer, "Select a model to see its fields.");
         // Adding the input fields.
         modelSelector.onChange(async (value) => {
             const selectedModel: Object = GetModelByName(this.plugin, value);
             inputContainer.empty();
-            console.log(value);
             if (value === "default") {
                 AddParagraph(inputContainer, "Select a model to see its fields.");
                 return;
             }
-            for (const input of selectedModel["fields"]) {
-                inputContainer.createEl("label", {
-                    text: input
-                })
-                inputContainer.createEl("input", {
-                    type: "text",
-                    placeholder: input,
-                    cls: [
-                        "ankiIntegrationModal__input--width"
-                    ]
-                })
-            }
+            AddFieldGroups(inputContainer, selectedModel["fields"])
         })
         // Adding the submitting button
-        contentEl.createEl("button", {
-            text: "Create note",
-            attr: {type: "submit"},
-            cls: [
-                "ankiIntegrationModal__button--width",
-                "ankiIntegrationModal__button--margin",
-                "ankiIntegrationModal__button--padding"
-            ]
-        }).addEventListener("click", async () => {
+        const submitButtonEl = AddButton(contentEl, "Create note", "submit");
+        submitButtonEl.addEventListener("click", async () => {
             if (deckSelector.getValue() === "default") {
                 new Notice("Please select a deck.");
                 return;
