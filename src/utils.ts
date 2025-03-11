@@ -145,6 +145,7 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
     return createdEl;
 }
 
+// Adding a pair of label and input for as many element as passed as keys.
 export function AddFieldGroups(parent: HTMLElement, keys: string[]) {
     for (const key of keys) {
         AddLabel(parent, key);

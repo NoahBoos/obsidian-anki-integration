@@ -39,7 +39,7 @@ export class CreateDeckModal extends Modal {
                 return;
             } else {
                 //  Else, we close it.
-                this.close()
+                this.close();
             }
         })
     }
@@ -61,9 +61,9 @@ export class AddNoteModal extends Modal {
         const ankiData: Object = this.plugin.settings.ankiData;
         const {contentEl} = this;
         // Adding the title of the modal.
-        AddTitle(contentEl, "Create a new note")
+        AddTitle(contentEl, "Create a new note");
         // Adding subtitle.
-        AddSubtitle(contentEl, "Deck & Model")
+        AddSubtitle(contentEl, "Deck & Model");
         // Adding the deck & model selectors container.
         const dropdownContainer = AddContainer(contentEl, [
             "ankiIntegrationModal__dropdownContainer--flex"
@@ -95,7 +95,7 @@ export class AddNoteModal extends Modal {
                 return;
             }
             AddFieldGroups(inputContainer, selectedModel["fields"])
-        })
+        });
         // Adding the submitting button
         const submitButtonEl = AddButton(contentEl, "Create note", "submit");
         submitButtonEl.addEventListener("click", async () => {
@@ -114,7 +114,7 @@ export class AddNoteModal extends Modal {
                     return;
                 }
             }
-        })
+        });
     }
 
     onClose() {
