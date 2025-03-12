@@ -1,8 +1,17 @@
 import AnkiIntegration from "./main";
 import {DropdownComponent} from "obsidian";
 
-// Allow to gather a model that has been saved in data.json thanks to SynchronizeData().
-export function GetModelByName(plugin: AnkiIntegration, name: string) {
+/**
+ * Fetches a model that has been saved in data.json by SynchronizeData().
+ * @param {AnkiIntegration} plugin - A reference to the instance of the plugin.
+ * @param {string} name - The name of the model whose data we want to fetch.
+ * @return {Object} model - The model data, if found.
+ */
+export function FetchModelByName(plugin: AnkiIntegration, name: string): object {
+    /**
+     * @type {Object<string, string|number>} modelsData
+     * A reference to the JSON containing every model-related data.
+     */
     const modelsData: Object = plugin.settings.ankiData["modelsData"];
     for (const [key, model] of Object.entries(modelsData)) {
         if (model.name === name) {

@@ -12,7 +12,7 @@ import {
     AddParagraph,
     AddSubtitle,
     AddTitle,
-    GetModelByName
+    FetchModelByName
 } from "../utils";
 
 export class AddNoteModal extends Modal {
@@ -53,7 +53,7 @@ export class AddNoteModal extends Modal {
         AddParagraph(inputContainer, "Select a model to see its fields.");
         // Adding the input fields.
         modelSelector.onChange(async (value) => {
-            const selectedModel: Object = GetModelByName(this.plugin, value);
+            const selectedModel: Object = FetchModelByName(this.plugin, value);
             inputContainer.empty();
             if (value === "default") {
                 AddParagraph(inputContainer, "Select a model to see its fields.");
