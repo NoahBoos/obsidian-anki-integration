@@ -1,4 +1,8 @@
-import {App, PluginSettingTab, Setting} from "obsidian";
+import {
+    App,
+    PluginSettingTab,
+    Setting
+} from "obsidian";
 import AnkiIntegration from "./main";
 import {
     RequestPermission,

@@ -1,6 +1,6 @@
 // Import des différentes classes d'Obsidian.
 import {
-    App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting
+    Plugin
 } from "obsidian";
 // Import des autres classes et jeux de variables nécessaires.
 import {
@@ -9,9 +9,11 @@ import {
     AnkiIntegrationSettingTab
 } from "./AnkiIntegrationSettingTab";
 import {
-    CreateDeckModal,
+    CreateDeckModal
+} from "./modals/CreateDeckModal";
+import {
     AddNoteModal
-} from "./Modals";
+} from "./modals/AddNoteModal";
 import {
     RequestPermission,
     SynchronizeData
