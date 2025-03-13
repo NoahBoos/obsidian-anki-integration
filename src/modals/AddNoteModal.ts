@@ -5,6 +5,9 @@ import {
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
+    AddNote
+} from "../AnkiConnect";
+import {
     AddButton,
     AddContainer,
     AddDropdown, AddFieldGroups,
@@ -17,8 +20,11 @@ import {
 
 /**
  * A modal dialog for creating a new Anki note.
+ *
+ * @description
  * It provides options to select a deck and a model, and dynamically generates input fields based on the selected model's configuration.
  * It allows users to enter information and submit the data to create a new note.
+ *
  * @extends Modal
  */
 export class AddNoteModal extends Modal {
@@ -128,38 +134,75 @@ export class AddNoteModal extends Modal {
             AddFieldGroups(inputContainer, selectedModel["fields"]);
         });
 
-        // Create the submit button.
-        const submitButtonEl = AddButton(contentEl, "Create note", "submit");
+        /**
+         * @type {HTMLButtonElement} submitButtonEl
+         * @description Submit button for the user to add the note.
+         */
+        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create note", "submit");
 
         /**
          * Event listener triggered when the submit button is clicked.
-         * Validates the form and ensures the required fields are filled before proceeding.
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
+         *
+         * @description
+         * - Check if the value of `deckName` is default, if yes, stop its execution.
+         * - Check if the value of `modelName` is default, if yes, stop its execution.
+         * - Retrieve each active input in the `inputContainer`.
+         *  - Retrieve its placeholder and its value.
+         *  - Push them as a `key => value` line of `modelName`.
+         * - Execute `AddNote()`.
          */
         submitButtonEl.addEventListener("click", async () => {
-            if (deckSelector.getValue() === "default") {
+            /**
+             * @type {string} deckName
+             * @definition The name of the deck selected for the note.
+             */
+            const deckName: string = deckSelector.getValue();
+            if (deckName === "default") {
                 new Notice("Please select a deck.");
                 return;
             }
 
-            if (modelSelector.getValue() === "default") {
+            /**
+             * @type {string} modelName
+             * @definition The name of the model selected for the note.
+             */
+            const modelName: string = modelSelector.getValue();
+            if (modelName === "default") {
                 new Notice("Please select a model.");
                 return;
             }
 
             /**
-             * @type {NodeListOf<HTMLInputElement>} inputFields
-             * @description A list of input fields within the input container.
+             * @type {Object} modelFields
+             * @definition An Object containing the fields and their values stored in the input.
              */
-            const inputFields: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
+            const modelFields: Object = {};
+            /**
+             * @type {NodeListOf<HTMLInputElement>} inputs
+             * @description A list of all the inputs generated previously.
+             */
+            const inputs: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
 
-            // Ensure at least the first two fields are filled.
-            for (let i = 0; i < 2; i++) {
-                if (inputFields[i].value === "") {
-                    new Notice("Please fill the two first fields, at least.");
-                    return;
-                }
+            for (let i = 0; i < inputs.length; i++) {
+                modelFields[inputs[i].placeholder] = inputs[i].value;
+            }
+
+            /**
+             * @type {boolean} result
+             * @definition Has the note been successfully created ?
+             */
+            const result: boolean = await AddNote(
+                deckName,
+                modelName,
+                modelFields
+            );
+
+            if (result === false) {
+                return;
+            } else {
+                this.close();
             }
         });
     }

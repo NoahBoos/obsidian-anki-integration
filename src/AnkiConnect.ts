@@ -260,3 +260,38 @@ export async function CreateDeck(deckName: string): Promise<boolean> {
         return false;
     }
 }
+
+/**
+ * Adds a new note to Anki in the specified deck and model.
+ *
+ * @description
+ * This function attempts to create a new note in Anki using the provided deck name, model name, and field data.
+ * If the operation is successful, a notification is displayed to the user. Otherwise, an error message is shown.
+ *
+ * @param {string} deckName - The name of the Anki deck where the note will be added.
+ * @param {string} modelName - The name of the Anki model to use for the note.
+ * @param {Object} fields - An object containing the fields of the note.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the note was successfully added, otherwise `false`.
+ */
+export async function AddNote(deckName: string, modelName: string, fields: Object): Promise<boolean> {
+    try {
+        // Attempt to create the note in Anki.
+        await Invoke("addNote", {
+            "note": {
+                "deckName": deckName,
+                "modelName": modelName,
+                "fields": fields
+            }
+        });
+
+        // Notify the user of successful note creation.
+        new Notice("Note has been added.");
+        return true;
+    } catch (error) {
+        new Notice(
+            "Failed to add note." +
+            "\n" + error +
+            "\n" + "Make sure that Anki is running."
+        );
+    }
+}

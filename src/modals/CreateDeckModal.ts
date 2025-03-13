@@ -13,8 +13,11 @@ import {
 
 /**
  * A modal dialog for creating a new deck.
+ *
+ * @description
  * This modal allows the user to enter a deck name and submit it to create a new deck.
  * Upon successful creation, the modal closes; if creation fails, it remains open.
+ *
  * @extends Modal
  */
 export class CreateDeckModal extends Modal {
@@ -46,10 +49,13 @@ export class CreateDeckModal extends Modal {
          * @type {HTMLInputElement} inputEl
          * @description Input field for the user to enter the name of the new deck.
          */
-        const inputEl = AddInput(contentEl, "text", "Enter the name of your new deck.");
+        const inputEl: HTMLInputElement = AddInput(contentEl, "text", "Enter the name of your new deck.");
 
-        // Adding the submitting button
-        const submitButtonEl = AddButton(contentEl, "Create a new deck", "submit");
+        /**
+         * @type {HTMLButtonElement} submitButtonEl
+         * @description Submit button for the user to create the deck.
+         */
+        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create a new deck", "submit");
 
         /**
          * Event listener triggered when the submit button is clicked.
@@ -59,8 +65,17 @@ export class CreateDeckModal extends Modal {
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.addEventListener("click", async () => {
-            const deckName = inputEl.value;
-            const result = await CreateDeck(deckName);
+            /**
+             * @type {string} deckName
+             * @definition The name of the deck selected for the note.
+             */
+            const deckName: string = inputEl.value;
+
+            /**
+             * @type {boolean} result
+             * @definition Has the deck been successfully created ?
+             */
+            const result: boolean = await CreateDeck(deckName);
 
             if (result === false) {
                 // If the deck hasn't been created, we do not close the modal.
