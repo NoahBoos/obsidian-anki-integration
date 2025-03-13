@@ -152,9 +152,10 @@ export function AddDropdown(parent: HTMLElement, defaultString: string, classes:
      */
     let createdEl: DropdownComponent;
     createdEl = new DropdownComponent(parent);
-    /* TIPS
-    *  "selectEl" allow you to interact directly on the selector contains in the created drop-down.
-    */
+    /**
+     * @remarks
+     * `selectEl` is a property of `createdEl` that allows you to access the `<select>` element.
+     */
     createdEl.selectEl.addClass(classes.join(" "));
     createdEl.addOption("default", defaultString);
     return createdEl;
@@ -192,6 +193,8 @@ export function AddLabel(parent: HTMLElement, text: string, classes: string[] = 
     /**
      * @type {HTMLLabelElement} createdEl
      * The created label.
+     * @remarks
+     * Defining the created label as an `HTMLLabelElement` instead of a generic `HTMLElement` ensures access to label-specific properties.
      */
     let createdEl: HTMLLabelElement;
     createdEl = parent.createEl("label", {
@@ -222,10 +225,8 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
     /**
      * @type {HTMLInputElement} createdEl
      * The created input.
-     */
-    /* TIPS
-     * It's important to define it as an HTMLInputElement instead of an HTMLElement,
-     * if we want to access the data an input would usually store, such as its value.
+     * @remarks
+     * Defining the created input as an `HTMLInputElement` instead of a generic `HTMLElement` ensures access to input-specific properties such as `value` or `checked`.
      */
     let createdEl: HTMLInputElement;
     createdEl = parent.createEl("input", {
@@ -271,10 +272,8 @@ export function AddButton(parent: HTMLElement, text: string, type: string, class
     /**
      * @type {HTMLButtonElement} createdEl
      * The created button.
-     */
-    /* TIPS
-     * It's important to define it as an HTMLButtonElement instead of an HTMLElement,
-     * if we want to access the data a button would usually store, such as its value.
+     * @remarks
+     * Defining the created button as an `HTMLButtonElement` instead of a generic `HTMLElement` ensures access to button-specific properties.
      */
     let createdEl: HTMLButtonElement;
     createdEl = parent.createEl("button", {
