@@ -1,8 +1,6 @@
-import {
-    Notice,
-    Plugin
-} from "obsidian";
+import {Notice} from "obsidian";
 import AnkiIntegration from "./main";
+
 const ANKI_PORT = 8765;
 
 export function Invoke(action: string, params={}) {
@@ -60,124 +58,205 @@ export async function RequestPermission(): Promise<any> {
     }
 }
 
-// Synchronize data between Obsidian and Anki
-export async function SynchronizeData(plugin: AnkiIntegration) {
-    // Attempting to synchronize decks-related data.
-    let decksData: Object;
+/**
+ * Synchronizes data between Obsidian and Anki by retrieving decks and models data.
+ *
+ * @async
+ * @function SynchronizeData
+ * @param {AnkiIntegration} plugin - The plugin instance managing Anki integration settings.
+ * @returns {Promise<void>} A promise that resolves once the synchronization is complete.
+ */
+export async function SynchronizeData(plugin: AnkiIntegration): Promise<void> {
+    /**
+     * @type {Object | null}
+     * @definition Object storing decks-related data retrieved from Anki. If no data is found, it remains `null`.
+     */
+    let decksData: Object | null;
     decksData = await GetDecksData();
+
+    // If valid deck data is retrieved, store it in the plugin settings.
     if (decksData !== null) plugin.settings.ankiData["decksData"] = decksData;
-    // Attempting to synchronize models-related data.
-    let modelsData: Object;
+
+    /**
+     * @type {Object | null}
+     * @definition Object storing models-related data retrieved from Anki. If no data is found, it remains `null`.
+     */
+    let modelsData: Object | null;
     modelsData = await GetModelsData();
+
+    // If valid model data is retrieved, store it in the plugin settings.
     if (modelsData !== null) plugin.settings.ankiData["modelsData"] = modelsData;
-    // Saving settings.
+
+    // Save the updated settings.
     await plugin.saveSetting();
 }
 
-// Get decks-related data.
-async function GetDecksData() {
+
+/**
+ * Retrieves decks-related data from Anki.
+ *
+ * @description
+ * - Calls AnkiConnect to fetch deck names and IDs.
+ * - If no decks are found, a notice is displayed, and the function returns `null`.
+ * - Iterates through each deck and stores its name and ID in an object.
+ * - If successful, a notice informs the user that decks have been synchronized.
+ * - If an error occurs, an error notice is displayed, and the function returns `null`.
+ *
+ * @async
+ * @function GetDecksData
+ * @returns {Promise<Object | null>} A promise that resolves to an object containing decks data,
+ * or `null` if no decks were found or if an error occurred.
+ */
+async function GetDecksData(): Promise<Object | null> {
     try {
+        /**
+         * @type {Object}
+         * @description Object storing all retrieved decks data.
+         */
         let result: Object = {};
+        /**
+         * @type {any}
+         * @description Response from AnkiConnect containing deck names and their corresponding IDs.
+         */
         const decksNamesAndIds: any = await Invoke("deckNamesAndIds", {});
-        // Checking if there is no result coming of the request.
+
+        // Checking if there is no result coming from the request.
         if (!decksNamesAndIds) {
-            // The user has no decks, so we inform them that no decks have been found.
             new Notice(
-                "No decks were found."
-                + "\n" + "Create a deck to synchronize deck data."
+                "No decks were found.\nCreate a deck to synchronize deck data."
             );
             return null;
         }
+
         for (let i = 0; i < Object.values(decksNamesAndIds).length; i++) {
-            // Initializing an Object that will store the data coming out of a request.
-            let deck: Object;
-            deck = {
+            // Storing the deck data in the result object.
+            result["deck" + i] = {
                 "name": Object.keys(decksNamesAndIds)[i],
                 "id": Object.values(decksNamesAndIds)[i]
-            }
-            // Copying the object into result{}.
-            result["deck" + i] = deck;
+            };
         }
-        // Decks-related data has been synchronized successfully, so we inform the user that Decks have been synchronized.
-        new Notice ("Decks have been synchronized.");
+
+        // Notify the user of successful deck synchronization.
+        new Notice("Decks have been synchronized.");
         return result;
     } catch (error) {
-        // We can't get decks-related data, so we display a Notice stating that we failed to synchronize decks-related data, along with the error.
+        // Notify the user of the error and suggest ensuring Anki is running.
         new Notice(
-            "Failed to synchronize decks."
-            + "\n" + error
-            + "\n" + "Please make sure that Anki is running."
+            "Failed to synchronize decks." +
+            "\n" + error +
+            "\n" + "Please make sure that Anki is running."
         );
         return null;
     }
 }
 
-// Get models-related data.
-async function GetModelsData() {
+/**
+ * Retrieves models-related data from Anki.
+ *
+ * @description
+ * - Calls AnkiConnect to fetch model names and IDs.
+ * - If no models are found, a notice is displayed, and the function returns `null`.
+ * - Iterates through each model, retrieves its fields, and stores the data in an object.
+ * - If successful, a notice informs the user that models have been synchronized.
+ * - If an error occurs, an error notice is displayed, and the function returns `null`.
+ *
+ * @async
+ * @function GetModelsData
+ * @returns {Promise<Object | null>} A promise that resolves to an object containing models data,
+ * or `null` if no models were found or if an error occurred.
+ */
+async function GetModelsData(): Promise<Object | null> {
     try {
+        /**
+         * @type {Object}
+         * @description Object storing all retrieved decks data.
+         */
         let result: Object = {};
+        /**
+         * @type {any}
+         * @description Response from AnkiConnect containing model names and their corresponding IDs.
+         */
         const modelNamesAndIds: any = await Invoke("modelNamesAndIds", {});
-        // Checking if there is no result coming of the request.
+
+        // Checking if there is no result coming from the request.
         if (!modelNamesAndIds) {
-            // The user has no models, so we inform them that no models have been found.
             new Notice(
-                "No models were found."
-                + "\n" + "Create a model to synchronize model data."
+                "No models were found." +
+                "\n" +
+                "Create a model to synchronize model data."
             );
             return null;
         }
+
         for (let i = 0; i < Object.values(modelNamesAndIds).length; i++) {
-            // Initializing a model Object.
-            let model: Object;
-            model = {
+            /**
+             * @type {Object}
+             * @description Object representing a single model with its name, ID, and fields.
+             */
+            let model: Object = {
                 "name": Object.keys(modelNamesAndIds)[i],
                 "id": Object.values(modelNamesAndIds)[i]
             };
-            // Initializing an Object that will store the data coming out of a request.
-            let modelFieldNames: Object;
-            // The request allow us to gather the name of each field of a model based on its name.
-            modelFieldNames = await Invoke("modelFieldNames", {"modelName": Object.keys(modelNamesAndIds)[i]});
-            // Adding the data resulting the request as the "field" attribute of the model Object.
-            model["fields"] = modelFieldNames;
-            // Copying the object into result{}.
+
+            // Retrieving field names for the current model.
+            model["fields"] = await Invoke("modelFieldNames", {
+                "modelName": Object.keys(modelNamesAndIds)[i]
+            });
+
+            // Storing the model data in the result object.
             result["model" + i] = model;
         }
-        // Models-related data has been synchronized successfully, so we inform the user that Models have been synchronized.
-        new Notice ("Models have been synchronized.");
+
+        // Notify the user of successful model synchronization.
+        new Notice("Models have been synchronized.");
         return result;
     } catch (error) {
-        // We can't get models-related data, so we display a Notice stating that we failed to synchronize models-related data, along with the error.
+        // Notify the user of the error and suggest ensuring Anki is running.
         new Notice(
-            "Failed to synchronize models."
-            + "\n" + error
-            + "\n" + "Please make sure that Anki is running."
+            "Failed to synchronize models." +
+            "\n" + error +
+            "\n" + "Please make sure that Anki is running."
         );
         return null;
     }
 }
 
-// Creating an Anki Deck
-export async function CreateDeck(deckName: string) {
+
+/**
+ * Creates a new Anki deck.
+ *
+ * @description
+ * - If the deck name is empty, a notice is displayed, and the function returns `false`.
+ * - If the deck creation is successful, a notice is displayed, and the function returns `true`.
+ * - If an error occurs, an error notice is displayed, and the function returns `false`.
+ *
+ * @async
+ * @function CreateDeck
+ * @param {string} deckName - The name of the deck to be created.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the deck was successfully created,
+ * or `false` if the creation failed or the deck name was empty.
+ */
+export async function CreateDeck(deckName: string): Promise<boolean> {
     // Checking if the deck name is empty.
     if (deckName === "") {
-        // We can't create a nameless deck, so we display a Notice informing the user that he needs to provide us a deck name.
+        // Display a notice informing the user that a deck name is required.
         new Notice("Please enter a name for your deck.");
-        // We can't create a nameless deck, therefore we return false and stop the process.
         return false;
     }
     try {
-        await Invoke("createDeck", {"deck": deckName});
-        // We created the deck, so we display a Notice informing the user that his deck has been successfully created.
+        // Attempt to create the deck in Anki.
+        await Invoke("createDeck", { "deck": deckName });
+
+        // Notify the user of successful deck creation.
         new Notice("Deck " + deckName + " has been created.");
-        // We successfully managed to create the deck, therefore we return true.
         return true;
     } catch (error) {
-        // We met an error, so we display a Notice informing the user that the deck creation process has been stopped.
-        new Notice("Failed to create the deck " + deckName
-            + ".\n" + error
-            + "\n" + "Make sure Anki is running."
+        // Notify the user of the error and suggest ensuring Anki is running.
+        new Notice(
+            "Failed to create the deck \"${deckName}\"." +
+            "\n" + error +
+            "\n" + "Make sure Anki is running."
         );
-        // We did not manage to create the deck, therefore we return false.
         return false;
     }
 }
