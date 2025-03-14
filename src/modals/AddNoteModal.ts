@@ -64,7 +64,7 @@ export class AddNoteModal extends Modal {
         const { contentEl } = this;
 
         // Add the title and subtitle to the modal.
-        AddTitle(contentEl, "Create a new note");
+        AddTitle(contentEl, "Add a new note");
         AddSubtitle(contentEl, "Deck & Model");
 
         /**
