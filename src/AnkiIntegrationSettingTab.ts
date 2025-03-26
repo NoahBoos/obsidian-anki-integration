@@ -11,13 +11,11 @@ import {
 
 // Anki Integration Settings declaration
 export interface AnkiIntegrationSettings {
-    mySetting: string;
     ankiData: Object;
 }
 
 // Anki Integration Settings default value
 export const DEFAULT_SETTINGS: AnkiIntegrationSettings = {
-    mySetting: "default value",
     ankiData: {}
 }
 
