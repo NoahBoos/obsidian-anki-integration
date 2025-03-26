@@ -1,11 +1,18 @@
-# Welcome to the wiki of Anki Integration !
+# Welcome to Anki Integration's GitHub Repository !
 ## What is Anki Integration ?
-Anki Integration is an Obsidian Plugin that allows you to synchronize and use Anki in Obsidian. Its main goal is to offer an Anki-Friendly workflow for users.
+Anki Integration is an Obsidian Plugin designed to make flashcard creation effortless.
 
+Unlike other solutions, it provides a seamless Obsidian-like experience that eliminates the usual friction between note-taking and flashcard-making.
 ## Anki Integration is stepping in your vault to save the day !
 If you are using Obsidian for note-taking and Anki for flashcards, you might have noticed a certain... Friction, when trying to create flashcards directly related to a note you are writing or reviewing on Obsidian.
 
-This is where Anki Integration steps in your vault to save the day ! It reduces the friction between Obsidian and Anki. With this plugin installed, you get features that allow you to effortlessly manage your Anki Collection, and this... Directly from Obsidian !
+Anki Integration is here to reduce the friction between Obsidian and Anki. With this plugin installed, you get access to features allowing you to effortlessly manage your Anki Collection.
+
+✅ Keep your flashcards up to date with one button to sync Anki *instantly* !
+
+✅ Create decks and flashcards directly from Obsidian with Obsidian-like pop-up window - say goodbye to copy/paste and window switching every two seconds.
+
+✅ Create flashcards with easy to use UI allowing to quickly choose the deck and the template of it !
 
 ### v1.0.0 of Anki Integration contains...
 - A way to synchronize your data from Anki to Obsidian.
