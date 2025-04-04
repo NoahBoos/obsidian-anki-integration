@@ -3,7 +3,7 @@
   "name": "Anki Integration",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "Create flashcards from your notes with a seamless Obsidian-like interface, structuring them with metadata and syncing effortlessly via AnkiConnect.",
+  "description": "Create flashcards from your notes with a seamless interface, structuring them with metadata and syncing effortlessly via AnkiConnect.",
   "author": "Noah Boos AKA Rift",
   "authorUrl": "https://github.com/NoahBoos",
   "isDesktopOnly": true
