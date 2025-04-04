@@ -33,7 +33,7 @@ export default class AnkiIntegration extends Plugin {
         // Adding a command to launch SynchronizeData().
         this.addCommand({
             id: 'synchronize-data',
-            name: 'Synchronize data with Anki',
+            name: 'Synchronize data',
             callback: () => {
                 SynchronizeData(this);
             }
