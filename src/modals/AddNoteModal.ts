@@ -192,6 +192,11 @@ export class AddNoteModal extends Modal {
              */
             const inputs: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
 
+            if (inputs[0].value === "" || inputs[1].value === "") {
+                new Notice("Please fill at least the two first fields of your note.")
+                return;
+            }
+
             for (let i = 0; i < inputs.length; i++) {
                 modelFields[inputs[i].placeholder] = inputs[i].value;
             }
