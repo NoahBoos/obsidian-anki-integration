@@ -125,22 +125,7 @@ export class AddNoteModal extends Modal {
              * An array of input data storing as separate object (1 objet = 1 input) the keys used to create each label-input pair and the values of each input.
              */
             const fieldsGroupData: Array<Object> = [];
-            /**
-             * @description
-             * The following for statement inject in fieldsGroupData a new object corresponding to an input and its label that has to be generated.
-             * Each object has the following property :
-             * - fieldName, a string used as the label text and the placeholder text of the input.
-             * - fieldValue, a string used as the value text of the input.
-             * The fieldName is mandatorily filled, while the fieldValue is mandatorily null here.
-             */
-            for (let i = 0; i < selectedModel["fields"].length; i++) {
-                const fieldName = selectedModel["fields"][i];
-                let fieldValue = null;
-                fieldsGroupData[i] = {
-                    fieldName: fieldName,
-                    fieldValue: fieldValue
-                }
-            }
+
             CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], {});
 
             // Clear existing input fields before updating.
