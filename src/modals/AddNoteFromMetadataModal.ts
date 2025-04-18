@@ -26,6 +26,7 @@ import {
  *
  * @description
  * It provides options to select a deck and a model, and dynamically generates input fields based on the selected model's configuration.
+ * It will pre-select both the deck to add the note in and the model to use to create the note by parsing YAML metadata.
  * It will autofill fields of the note by parsing YAML metadata.
  * It allows users to enter information and submit the data to create a new note.
  *
@@ -64,9 +65,9 @@ export class AddNoteFromMetadataModal extends Modal {
 
         /**
          * @type {TFile} activeFileData
-         * The file defined as active in the Obsidian instance.
+         * @description The file defined as active in the Obsidian instance.
          * @type {FrontMatterCache} yaml
-         * The YAML metadata stored in object under the key: "value" format.
+         * @description The YAML metadata stored in object under the key: "value" format.
          */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
         const yaml: FrontMatterCache = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
@@ -92,6 +93,14 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const deckKeys: string[] = Object.keys(ankiData["decksData"]);
         AddOptionsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
+        /**
+         * @description
+         * Check if the value of the Yaml Metadata "deck" exists as a value in a select of the dropdown menu.
+         */
+        let isDeckMetadataExistingAsDeckOption: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === yaml["deck"]);
+        if (isDeckMetadataExistingAsDeckOption) {
+            deckSelector.setValue(yaml["deck"]);
+        }
 
         // Create and configure the model selector dropdown.
         const modelSelector = AddDropdown(dropdownContainer, "Choose a model");
@@ -102,6 +111,14 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
         AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
+        /**
+         * @description
+         * Check if the value of the Yaml Metadata "model" exists as a value in a select of the dropdown menu.
+         */
+        let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === yaml["model"]);
+        if (isModelMetadataExistingAsModelOption) {
+            modelSelector.setValue(yaml["model"]);
+        }
 
         // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
@@ -131,7 +148,7 @@ export class AddNoteFromMetadataModal extends Modal {
 
             /**
              * @type {Array} fieldsGroupData
-             * An array of input data storing as separate object (1 objet = 1 input) the keys used to create each label-input pair and the values of each input.
+             * @description An array of input data storing as separate object (1 objet = 1 input) the keys used to create each label-input pair and the values of each input.
              */
             const fieldsGroupData: Array<Object> = [];
 
