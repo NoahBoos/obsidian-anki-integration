@@ -211,10 +211,11 @@ export function AddLabel(parent: HTMLElement, text: string, classes: string[] = 
  * @param {HTMLElement} parent - The parent container to which the input will be added.
  * @param {string} type - A string containing the type of the input.
  * @param {string} placeholder - A string containing the placeholder text of the input.
+ * @param {string} value - A string containing the placeholder text of the input.
  * @param {string[]} classes - An array of strings containing CSS classes to add to the created element.
  * @return {HTMLInputElement} createdEl - The created input.
  */
-export function AddInput(parent: HTMLElement, type: string, placeholder: string = "", classes: string[] = []): HTMLInputElement {
+export function AddInput(parent: HTMLElement, type: string, placeholder: string = "", value: string = "", classes: string[] = []): HTMLInputElement {
     /**
      * @remarks
      * Pushes into classes all CSS classes that are mandatory for a container.
@@ -232,6 +233,7 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
     createdEl = parent.createEl("input", {
         type: type,
         placeholder: placeholder,
+        value: value,
         cls: [
             classes.join(" ")
         ]
@@ -242,12 +244,12 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
 /**
  * Adds a pair of label and input as children of a given HTMLElement for each key in the provided array.
  * @param {HTMLElement} parent - The parent container to which the label and input pairs will be added.
- * @param {string[]} keys - An array of strings representing the keys used to create each label-input pair.
+ * @param {Array} inputData - An array of input data storing the keys used to create each label-input pair and the value of each input.
  */
-export function AddFieldGroups(parent: HTMLElement, keys: string[]) {
-    for (const key of keys) {
-        AddLabel(parent, key);
-        AddInput(parent, "text", key);
+export function AddFieldGroups(parent: HTMLElement, inputData: Array<Object>) {
+    for (let i = 0; i < inputData.length; i++) {
+        AddLabel(parent, inputData[i]["fieldName"]);
+        AddInput(parent, "text", inputData[i]["fieldName"], inputData[i]["fieldValue"]);
     }
 }
 
@@ -286,4 +288,32 @@ export function AddButton(parent: HTMLElement, text: string, type: string, class
         ]
     });
     return createdEl;
+}
+
+/**
+ * Function that create and push fields group data in a given array.
+ *
+ * @description
+ * The following for statement inject in fieldsGroupData a new object corresponding to an input and its label that has to be generated.
+ * Each object has the following property :
+ * - fieldName, a string used as the label text and the placeholder text of the input.
+ * - fieldValue, a string used as the value text of the input.
+ * The fieldName is mandatorily filled, while the fieldValue is optional by being set to null in the first place and being overwritten if the set of value contains a key that is the same as the currently used key.
+ * @param fieldsGroupData - The array in which fieldsGroupData Object will be push.
+ * @param {Array} keys - The set of keys.
+ * @param {Array} values - The set of values.
+ * @constructor
+ */
+export function CreateFieldsGroupData(fieldsGroupData: Array<Object>, keys: Array<string>, values: Object = {}) {
+    for (let i = 0 ; i < keys.length; i++) {
+        const fieldName = keys[i];
+        let fieldValue = null;
+        if (values.hasOwnProperty(fieldName.toLowerCase())) {
+            fieldValue = values[fieldName.toLowerCase()];
+        }
+        fieldsGroupData[i] = {
+            fieldName: fieldName,
+            fieldValue: fieldValue
+        }
+    }
 }

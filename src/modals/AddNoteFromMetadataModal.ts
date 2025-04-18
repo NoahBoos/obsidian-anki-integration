@@ -1,7 +1,10 @@
 import {
     App,
+    getFrontMatterInfo,
     Modal,
-    Notice
+    Notice,
+    parseYaml,
+    TFile
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
@@ -19,15 +22,16 @@ import {
 } from "../utils";
 
 /**
- * A modal dialog for creating a new Anki note.
+ * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
  *
  * @description
  * It provides options to select a deck and a model, and dynamically generates input fields based on the selected model's configuration.
+ * It will autofill fields of the note by parsing YAML metadata.
  * It allows users to enter information and submit the data to create a new note.
  *
  * @extends Modal
  */
-export class AddNoteModal extends Modal {
+export class AddNoteFromMetadataModal extends Modal {
     /**
      * @type {AnkiIntegration}
      * The plugin instance associated with the modal.
@@ -35,7 +39,7 @@ export class AddNoteModal extends Modal {
     plugin: AnkiIntegration;
 
     /**
-     * Creates a new AddNoteModal instance.
+     * Creates a new AddNoteFromMetadataModal instance.
      * Initializes the modal with the provided app and plugin.
      * @param {App} app - The Obsidian app instance.
      * @param {AnkiIntegration} plugin - The AnkiIntegration plugin instance.
@@ -45,10 +49,6 @@ export class AddNoteModal extends Modal {
         this.plugin = plugin;
     }
 
-    /**
-     * Handles the opening of the modal for creating a new Anki note.
-     * Initializes the UI elements, populates dropdowns with Anki data, and sets up event listeners.
-     */
     onOpen() {
         /**
          * @type {Object} ankiData
@@ -63,7 +63,7 @@ export class AddNoteModal extends Modal {
         const { contentEl } = this;
 
         // Add the title and subtitle to the modal.
-        AddTitle(contentEl, "Add a new note");
+        AddTitle(contentEl, "Add a new note using metadata");
         AddSubtitle(contentEl, "Deck & Model");
 
         /**
@@ -121,27 +121,24 @@ export class AddNoteModal extends Modal {
             const selectedModel: Object = FetchModelByName(this.plugin, value);
 
             /**
+             * @type {TFile} activeFileData
+             * The file defined as active in the Obsidian instance.
+             * @type {string} fileContent
+             * The raw content of the file, including frontmatter and regular text.
+             * @type {Object} yaml
+             * The YAML metadata stored in object under the key: "value" format.
+             */
+            const activeFileData: TFile = this.app.workspace.getActiveFile();
+            const fileContent: string = await this.app.vault.cachedRead(activeFileData);
+            const yaml: Object = parseYaml(getFrontMatterInfo(fileContent).frontmatter);
+
+            /**
              * @type {Array} fieldsGroupData
              * An array of input data storing as separate object (1 objet = 1 input) the keys used to create each label-input pair and the values of each input.
              */
             const fieldsGroupData: Array<Object> = [];
-            /**
-             * @description
-             * The following for statement inject in fieldsGroupData a new object corresponding to an input and its label that has to be generated.
-             * Each object has the following property :
-             * - fieldName, a string used as the label text and the placeholder text of the input.
-             * - fieldValue, a string used as the value text of the input.
-             * The fieldName is mandatorily filled, while the fieldValue is mandatorily null here.
-             */
-            for (let i = 0; i < selectedModel["fields"].length; i++) {
-                const fieldName = selectedModel["fields"][i];
-                let fieldValue = null;
-                fieldsGroupData[i] = {
-                    fieldName: fieldName,
-                    fieldValue: fieldValue
-                }
-            }
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], {});
+
+            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], yaml);
 
             // Clear existing input fields before updating.
             inputContainer.empty();
@@ -160,7 +157,7 @@ export class AddNoteModal extends Modal {
          * @type {HTMLButtonElement} submitButtonEl
          * @description Submit button for the user to add the note.
          */
-        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create note", "submit");
+        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create Note", "submit");
 
         /**
          * Event listener triggered when the submit button is clicked.
@@ -199,7 +196,7 @@ export class AddNoteModal extends Modal {
             /**
              * @type {Object} modelFields
              * @definition An Object containing the fields and their values stored in the input.
-             */
+            */
             const modelFields: Object = {};
             /**
              * @type {NodeListOf<HTMLInputElement>} inputs
