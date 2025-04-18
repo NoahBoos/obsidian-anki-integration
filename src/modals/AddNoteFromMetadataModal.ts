@@ -1,9 +1,7 @@
 import {
     App, FrontMatterCache,
-    getFrontMatterInfo,
     Modal,
     Notice,
-    parseYaml,
     TFile
 } from "obsidian";
 import AnkiIntegration from "../main";
@@ -67,7 +65,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @type {TFile} activeFileData
          * @description The file defined as active in the Obsidian instance.
          * @type {FrontMatterCache} yaml
-         * @description The YAML metadata stored in object under the key: "value" format.
+         * @description The YAML metadata stored in an object under the key: "value" format.
          */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
         const yaml: FrontMatterCache = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
@@ -131,8 +129,16 @@ export class AddNoteFromMetadataModal extends Modal {
             "ankiIntegrationModal__inputContainer--flex"
         ]);
 
-        // Display default message before a model is selected.
-        AddParagraph(inputContainer, "Select a model to see its fields.");
+        /**
+         * @description
+         * If there is no model metadata existing as model option, it displays the "Select a model..." message,
+         * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
+         */
+        if (!isModelMetadataExistingAsModelOption) {
+            AddParagraph(inputContainer, "Select a model to see its fields.");
+        } else {
+            this.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), yaml);
+        }
 
         /**
          * Event listener triggered when the model selector value changes.
@@ -140,31 +146,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @param {string} value - The selected model name.
          */
         modelSelector.onChange(async (value) => {
-            /**
-             * @type {Object} selectedModel
-             * @description The model object corresponding to the selected model name.
-             */
-            const selectedModel: Object = FetchModelByName(this.plugin, value);
-
-            /**
-             * @type {Array} fieldsGroupData
-             * @description An array of input data storing as separate object (1 objet = 1 input) the keys used to create each label-input pair and the values of each input.
-             */
-            const fieldsGroupData: Array<Object> = [];
-
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], yaml);
-
-            // Clear existing input fields before updating.
-            inputContainer.empty();
-
-            // Display default message if no valid model is selected.
-            if (value === "default") {
-                AddParagraph(inputContainer, "Select a model to see its fields.");
-                return;
-            }
-
-            // Add input fields dynamically based on the model's fields.
-            AddFieldGroups(inputContainer, fieldsGroupData);
+            this.AddFieldsGroupsToModal(inputContainer, value, yaml);
         });
 
         /**
@@ -192,6 +174,10 @@ export class AddNoteFromMetadataModal extends Modal {
              * @definition The name of the deck selected for the note.
              */
             const deckName: string = deckSelector.getValue();
+            /**
+             * @description
+             * Throwing an error if no deck is selected.
+             */
             if (deckName === "default") {
                 new Notice("Please select a deck.");
                 return;
@@ -202,6 +188,10 @@ export class AddNoteFromMetadataModal extends Modal {
              * @definition The name of the model selected for the note.
              */
             const modelName: string = modelSelector.getValue();
+            /**
+             * @description
+             * Throwing an error if no model is selected.
+             */
             if (modelName === "default") {
                 new Notice("Please select a model.");
                 return;
@@ -217,6 +207,15 @@ export class AddNoteFromMetadataModal extends Modal {
              * @description A list of all the inputs generated previously.
              */
             const inputs: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
+
+            /**
+             * @description
+             * Throwing an error if one or both of the two first inputs aren't filled.
+             */
+            if (inputs[0].value === "" || inputs[1].value === "") {
+                new Notice("Please fill at least the two first fields of your note.")
+                return;
+            }
 
             for (let i = 0; i < inputs.length; i++) {
                 modelFields[inputs[i].placeholder] = inputs[i].value;
@@ -253,5 +252,41 @@ export class AddNoteFromMetadataModal extends Modal {
 
         // Clear the content of the modal.
         contentEl.empty();
+    }
+
+    /**
+     * Adds as many fields groups as the currently selected model has fields to the modal.
+     * @param {HTMLDivElement} inputContainer - DIV containing all the generated inputs.
+     * @param {any} value - Currently selected model select value of the modelSelector (DropdownComponent).
+     * @param {FrontMatterCache} yaml - The YAML metadata of the currently active note.
+     */
+    AddFieldsGroupsToModal(inputContainer: HTMLDivElement, value: any, yaml: FrontMatterCache) {
+        /**
+         * @type {Object} selectedModel
+         * @description The model object corresponding to the selected model name.
+         */
+        const selectedModel: Object = FetchModelByName(this.plugin, value);
+        /**
+         * @type {Array} fieldsGroupData
+         * @description An array of input data storing as separate object (1 object = 1 input) the keys used to create each label-input pair and the values of each input.
+         */
+        const fieldsGroupData: Array<Object> = [];
+        /**
+         * @description
+         * Create the different fields group objects and push them into fieldsGroupData.
+         */
+        CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], yaml);
+
+        // Clear existing input fields before updating.
+        inputContainer.empty();
+
+        // Display default message if no valid model is selected.
+        if (value === "default") {
+            AddParagraph(inputContainer, "Select a model to see its fields.");
+            return;
+        }
+
+        // Add input fields dynamically based on the model's fields.
+        AddFieldGroups(inputContainer, fieldsGroupData);
     }
 }
