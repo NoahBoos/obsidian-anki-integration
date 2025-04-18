@@ -15,6 +15,9 @@ import {
     AddNoteModal
 } from "./modals/AddNoteModal";
 import {
+    AddNoteFromMetadataModal
+} from "./modals/AddNoteFromMetadataModal";
+import {
     RequestPermission,
     SynchronizeData
 } from "./AnkiConnect";
@@ -52,6 +55,14 @@ export default class AnkiIntegration extends Plugin {
             name: 'Add a new note',
             callback: () => {
                 new AddNoteModal(this.app, this).open();
+            }
+        })
+        // Adding a command to open the AddNoteFromMetadataModal.
+        this.addCommand({
+            id: 'add-a-new-note-from-metadata',
+            name: 'Add a new note from metadata',
+            callback: () => {
+                new AddNoteFromMetadataModal(this.app, this).open();
             }
         })
     }
