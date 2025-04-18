@@ -1,5 +1,5 @@
 import {
-    App,
+    App, FrontMatterCache,
     getFrontMatterInfo,
     Modal,
     Notice,
@@ -62,6 +62,15 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const { contentEl } = this;
 
+        /**
+         * @type {TFile} activeFileData
+         * The file defined as active in the Obsidian instance.
+         * @type {FrontMatterCache} yaml
+         * The YAML metadata stored in object under the key: "value" format.
+         */
+        const activeFileData: TFile = this.app.workspace.getActiveFile();
+        const yaml: FrontMatterCache = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
+
         // Add the title and subtitle to the modal.
         AddTitle(contentEl, "Add a new note using metadata");
         AddSubtitle(contentEl, "Deck & Model");
@@ -119,18 +128,6 @@ export class AddNoteFromMetadataModal extends Modal {
              * @description The model object corresponding to the selected model name.
              */
             const selectedModel: Object = FetchModelByName(this.plugin, value);
-
-            /**
-             * @type {TFile} activeFileData
-             * The file defined as active in the Obsidian instance.
-             * @type {string} fileContent
-             * The raw content of the file, including frontmatter and regular text.
-             * @type {Object} yaml
-             * The YAML metadata stored in object under the key: "value" format.
-             */
-            const activeFileData: TFile = this.app.workspace.getActiveFile();
-            const fileContent: string = await this.app.vault.cachedRead(activeFileData);
-            const yaml: Object = parseYaml(getFrontMatterInfo(fileContent).frontmatter);
 
             /**
              * @type {Array} fieldsGroupData
