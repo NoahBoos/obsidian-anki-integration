@@ -5,7 +5,7 @@ import {
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
-    AddNote
+    AddNote, ProcessAddNote
 } from "../AnkiConnect";
 import {
     AddButton,
@@ -61,6 +61,7 @@ export class AddNoteModal extends Modal {
          * @description The main content container of the modal.
          */
         const { contentEl } = this;
+        this.contentEl.focus();
 
         // Add the title and subtitle to the modal.
         AddTitle(contentEl, "Add a new note");
@@ -148,75 +149,25 @@ export class AddNoteModal extends Modal {
         const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create note", "submit");
 
         /**
-         * Event listener triggered when the submit button is clicked.
+         * @description
+         * "Click" event handler to send the form and trigger ProcessAddNote().
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
-         *
-         * @description
-         * - Check if the value of `deckName` is default, if yes, stop its execution.
-         * - Check if the value of `modelName` is default, if yes, stop its execution.
-         * - Retrieve each active input in the `inputContainer`.
-         *  - Retrieve its placeholder and its value.
-         *  - Push them as a `key => value` line of `modelName`.
-         * - Execute `AddNote()`.
          */
         submitButtonEl.addEventListener("click", async () => {
-            /**
-             * @type {string} deckName
-             * @definition The name of the deck selected for the note.
-             */
-            const deckName: string = deckSelector.getValue();
-            if (deckName === "default") {
-                new Notice("Please select a deck.");
-                return;
-            }
-
-            /**
-             * @type {string} modelName
-             * @definition The name of the model selected for the note.
-             */
-            const modelName: string = modelSelector.getValue();
-            if (modelName === "default") {
-                new Notice("Please select a model.");
-                return;
-            }
-
-            /**
-             * @type {Object} modelFields
-             * @definition An Object containing the fields and their values stored in the input.
-             */
-            const modelFields: Object = {};
-            /**
-             * @type {NodeListOf<HTMLInputElement>} inputs
-             * @description A list of all the inputs generated previously.
-             */
-            const inputs: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
-
-            if (inputs[0].value === "" || inputs[1].value === "") {
-                new Notice("Please fill at least the two first fields of your note.")
-                return;
-            }
-
-            for (let i = 0; i < inputs.length; i++) {
-                modelFields[inputs[i].placeholder] = inputs[i].value;
-            }
-
-            /**
-             * @type {boolean} result
-             * @definition Has the note been successfully created ?
-             */
-            const result: boolean = await AddNote(
-                deckName,
-                modelName,
-                modelFields
-            );
-
-            if (result === false) {
-                return;
-            } else {
-                this.close();
-            }
+            await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
         });
+        /**
+         * @description
+         * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessAddNote().
+         * @async
+         * @param {KeyboardEvent} event - The registered keys that are pressed when contentEl is open.
+         */
+        this.contentEl.addEventListener("keydown", async (event) => {
+            if (event.shiftKey && event.key === "Enter") {
+                await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
+            }
+        })
     }
 
     /**

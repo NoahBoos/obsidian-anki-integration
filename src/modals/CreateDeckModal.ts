@@ -3,7 +3,7 @@ import {
     Modal
 } from "obsidian";
 import {
-    CreateDeck
+    CreateDeck, ProcessCreateDeck
 } from "../AnkiConnect";
 import {
     AddTitle,
@@ -40,7 +40,8 @@ export class CreateDeckModal extends Modal {
          * @type {HTMLElement} contentEl
          * @description The main content container of the modal.
          */
-        const {contentEl} = this;
+        const { contentEl } = this;
+        this.contentEl.focus();
 
         // Adding the title of the modal
         AddTitle(contentEl, "Create a new deck");
@@ -58,33 +59,25 @@ export class CreateDeckModal extends Modal {
         const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create a new deck", "submit");
 
         /**
-         * Event listener triggered when the submit button is clicked.
-         * It attempts to create a new deck and closes the modal if the deck is successfully created.
-         * If the deck creation fails, the modal remains open.
+         * @description
+         * "Click" event handler to send the form and trigger ProcessCreateDeck().
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.addEventListener("click", async () => {
-            /**
-             * @type {string} deckName
-             * @definition The name of the deck selected for the note.
-             */
-            const deckName: string = inputEl.value;
-
-            /**
-             * @type {boolean} result
-             * @definition Has the deck been successfully created ?
-             */
-            const result: boolean = await CreateDeck(deckName);
-
-            if (result === false) {
-                // If the deck hasn't been created, we do not close the modal.
-                return;
-            } else {
-                // Else, we close it.
-                this.close();
-            }
+            await ProcessCreateDeck(inputEl, this);
         });
+        /**
+         * @description
+         * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessCreateDeck().
+         * @async
+         * @param {KeyboardEvent} event - The registered keys that are pressed when contentEl is open.
+         */
+        this.contentEl.addEventListener("keydown", async (event) => {
+            if (event.shiftKey && event.key === "Enter") {
+                await ProcessCreateDeck(inputEl, this);
+            }
+        })
     }
 
     /**

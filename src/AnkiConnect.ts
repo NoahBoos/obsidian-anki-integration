@@ -1,5 +1,6 @@
-import {Notice} from "obsidian";
+import {DropdownComponent, Modal, Notice} from "obsidian";
 import AnkiIntegration from "./main";
+import {Drop} from "esbuild";
 
 const ANKI_PORT = 8765;
 
@@ -234,15 +235,18 @@ async function GetModelsData(): Promise<Object | null> {
  * @function CreateDeck
  * @param {string} deckName - The name of the deck to be created.
  * @returns {Promise<boolean>} A promise that resolves to `true` if the deck was successfully created,
- * or `false` if the creation failed or the deck name was empty.
+ * or `false` if the creation failed or if deckName is empty.
  */
 export async function CreateDeck(deckName: string): Promise<boolean> {
-    // Checking if the deck name is empty.
+    /**
+     * @description
+     * Throwing an error if deckName is an empty string.
+     */
     if (deckName === "") {
-        // Display a notice informing the user that a deck name is required.
         new Notice("Please enter a name for your deck.");
         return false;
     }
+
     try {
         // Attempt to create the deck in Anki.
         await Invoke("createDeck", { "deck": deckName });
@@ -258,6 +262,34 @@ export async function CreateDeck(deckName: string): Promise<boolean> {
             "\n" + "Make sure Anki is running."
         );
         return false;
+    }
+}
+
+/**
+ * Verifies, analyzes and treats data related to the CreateDeck() method ; Called to send a form once it's completed.
+ *
+ * @param {HTMLInputElement} inputEl - The input element that contains the name of the deck to be created.
+ * @param {Modal} modal - The opened modal itself.
+ */
+export async function ProcessCreateDeck(inputEl: HTMLInputElement, modal: Modal): Promise<boolean> {
+    /**
+     * @type {string} deckName
+     * @definition The name of the deck selected for the note.
+     */
+    const deckName: string = inputEl.value;
+
+    /**
+     * @type {boolean} result
+     * @definition Has the deck been successfully created ?
+     */
+    const result: boolean = await CreateDeck(deckName);
+
+    if (result === false) {
+        // If the deck hasn't been created, we do not close the modal.
+        return;
+    } else {
+        // Else, we close it.
+        modal.close();
     }
 }
 
@@ -293,5 +325,96 @@ export async function AddNote(deckName: string, modelName: string, fields: Objec
             "\n" + error +
             "\n" + "Make sure that Anki is running."
         );
+    }
+}
+
+/**
+ * Verifies, analyzes and treats data related to the AddNote() method ; Called to send a form once it's completed.
+ *
+ * @description
+ * - Check if the value of `deckName` is default, if yes, return.
+ * - Check if the value of `modelName` is default, if yes, return.
+ * - Check if the two first input fields are empty, if yes, return.
+ * - Create a modelFields objects that will store under a key: "value" format data related to each field of the note that will be created.
+ * - Trigger AddNote() and wait for it to return "true" or "false" depending on if the note has been added successfully.
+ * - Treat AddNote() boolean returns by closing the modal or not.
+ *
+ * @param {DropdownComponent} deckSelector - Dropdown component storing deck-related data.
+ * @param {DropdownComponent} modelSelector - Dropdown component storing model-related data.
+ * @param {HTMLDivElement} inputContainer - Speaking for itself.
+ * @param {Modal} modal - The opened modal itself.
+ */
+export async function ProcessAddNote(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, modal: Modal): Promise<boolean> {
+    /**
+     * @type {string} deckName
+     * @definition The name of the deck selected for the note.
+     */
+    const deckName: string = deckSelector.getValue();
+    /**
+     * @description
+     * Throwing an error if no deck is selected.
+     */
+    if (deckName === "default") {
+        new Notice("Please select a deck.");
+        return;
+    }
+
+    /**
+     * @type {string} modelName
+     * @definition The name of the model selected for the note.
+     */
+    const modelName: string = modelSelector.getValue();
+    /**
+     * @description
+     * Throwing an error if no model is selected.
+     */
+    if (modelName === "default") {
+        new Notice("Please select a model.");
+        return;
+    }
+
+    /**
+     * @type {Object} modelFields
+     * @definition An Object containing the fields and their values stored in the input.
+     */
+    const modelFields: Object = {};
+    /**
+     * @type {NodeListOf<HTMLInputElement>} inputs
+     * @description A list of all the inputs generated previously.
+     */
+    const inputs: NodeListOf<HTMLInputElement> = inputContainer.querySelectorAll("input");
+
+    /**
+     * @description
+     * Throwing an error if one or both of the two first inputs aren't filled.
+     */
+    if (inputs[0].value === "" || inputs[1].value === "") {
+        new Notice("Please fill at least the two first fields of your note.")
+        return;
+    }
+
+    /**
+     * @description
+     * Building modelFields Object by adding data using the key: "value" format.
+     * The key is the placeholder of the input that is looped, the value is value of the input that is looped.
+     */
+    for (let i = 0; i < inputs.length; i++) {
+        modelFields[inputs[i].placeholder] = inputs[i].value;
+    }
+
+    /**
+     * @type {boolean} result
+     * @definition Has the note been successfully created ?
+     */
+    const result: boolean = await AddNote(
+        deckName,
+        modelName,
+        modelFields
+    );
+
+    if (result === false) {
+        return;
+    } else {
+        modal.close();
     }
 }
