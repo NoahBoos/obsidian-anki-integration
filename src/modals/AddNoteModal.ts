@@ -127,19 +127,25 @@ export class AddNoteModal extends Modal {
              */
             const fieldsGroupData: Array<Object> = [];
 
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], {});
-
-            // Clear existing input fields before updating.
             inputContainer.empty();
 
-            // Display default message if no valid model is selected.
+            /**
+             * @description
+             * Checks the currently selected option of the dropdown.
+             * If its value is default, it displays a message requesting the user to select a model.
+             * Else, it means that a model is selected, therefore, it creates the fields groups data and displays them.
+             */
             if (value === "default") {
                 AddParagraph(inputContainer, "Select a model to see its fields.");
                 return;
+            } else {
+                /**
+                 * @description
+                 * Create the different fields group objects and push them into fieldsGroupData.
+                 */
+                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], {});
+                AddFieldGroups(inputContainer, fieldsGroupData);
             }
-
-            // Add input fields dynamically based on the model's fields.
-            AddFieldGroups(inputContainer, fieldsGroupData);
         });
 
         /**
