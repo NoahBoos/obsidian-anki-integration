@@ -208,7 +208,7 @@ export class AddNoteFromMetadataModal extends Modal {
              * @description
              * Create the different fields group objects and push them into fieldsGroupData.
              */
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], yaml);
+            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
             AddFieldGroups(inputContainer, fieldsGroupData);
         }
     }
