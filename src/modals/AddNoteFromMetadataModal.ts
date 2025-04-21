@@ -92,14 +92,6 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const deckKeys: string[] = Object.keys(ankiData["decksData"]);
         AddOptionsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
-        /**
-         * @description
-         * Check if the value of the Yaml Metadata "deck" exists as a value in a select of the dropdown menu.
-         */
-        let isDeckMetadataExistingAsDeckOption: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === yaml["deck"]);
-        if (isDeckMetadataExistingAsDeckOption) {
-            deckSelector.setValue(yaml["deck"]);
-        }
 
         // Create and configure the model selector dropdown.
         const modelSelector = AddDropdown(dropdownContainer, "Choose a model");
@@ -110,14 +102,6 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
         AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
-        /**
-         * @description
-         * Check if the value of the Yaml Metadata "model" exists as a value in a select of the dropdown menu.
-         */
-        let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === yaml["model"]);
-        if (isModelMetadataExistingAsModelOption) {
-            modelSelector.setValue(yaml["model"]);
-        }
 
         // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
@@ -131,17 +115,6 @@ export class AddNoteFromMetadataModal extends Modal {
         ]);
 
         /**
-         * @description
-         * If there is no model metadata existing as model option, it displays the "Select a model..." message,
-         * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
-         */
-        if (!isModelMetadataExistingAsModelOption) {
-            AddParagraph(inputContainer, "Select a model to see its fields.");
-        } else {
-            this.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), yaml);
-        }
-
-        /**
          * Event listener triggered when the model selector value changes.
          * Updates the inputContainer with the fields corresponding to the selected model.
          * @param {string} value - The selected model name.
@@ -149,6 +122,8 @@ export class AddNoteFromMetadataModal extends Modal {
         modelSelector.onChange(async (value) => {
             this.AddFieldsGroupsToModal(inputContainer, value, yaml);
         });
+
+        this.onOpenAsync(deckSelector, modelSelector, inputContainer, yaml);
 
         /**
          * @type {HTMLButtonElement} submitButtonEl
@@ -191,6 +166,12 @@ export class AddNoteFromMetadataModal extends Modal {
 
         // Clear the content of the modal.
         contentEl.empty();
+    }
+
+    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, yaml: FrontMatterCache): Promise<void> {
+        await AutoAssignDeck(deckSelector, yaml);
+        await AutoAssignModel(modelSelector, yaml);
+        await AutoGenerateFields(this, modelSelector, inputContainer, yaml);
     }
 
     /**
