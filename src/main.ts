@@ -21,6 +21,7 @@ import {
     RequestPermission,
     SynchronizeData
 } from "./AnkiConnect";
+import {AddNoteFromCodeblockModal} from "./modals/AddNoteFromCodeblockModal";
 
 export default class AnkiIntegration extends Plugin {
     settings: AnkiIntegrationSettings;
@@ -63,6 +64,14 @@ export default class AnkiIntegration extends Plugin {
             name: 'Add a new note from metadata',
             callback: () => {
                 new AddNoteFromMetadataModal(this.app, this).open();
+            }
+        })
+        // Adding a command to open the AddNoteFromCodeblockModal.
+        this.addCommand({
+            id: 'add-a-new-note-to-codeblock',
+            name: 'Add a new note from codeblock',
+            callback: () => {
+                new AddNoteFromCodeblockModal(this.app, this).open();
             }
         })
     }
