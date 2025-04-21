@@ -1,12 +1,11 @@
 import {
-    App, FrontMatterCache,
+    App, DropdownComponent, FrontMatterCache, MetadataCache,
     Modal,
-    Notice,
     TFile
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
-    AddNote, ProcessAddNote
+    ProcessAddNote
 } from "../AnkiConnect";
 import {
     AddButton,
@@ -15,7 +14,7 @@ import {
     AddOptionsToDropdownFromDataset,
     AddParagraph,
     AddSubtitle,
-    AddTitle, CreateFieldsGroupData,
+    AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
 
@@ -33,7 +32,7 @@ import {
 export class AddNoteFromMetadataModal extends Modal {
     /**
      * @type {AnkiIntegration}
-     * The plugin instance associated with the modal.
+     * @description The plugin instance associated with the modal.
      */
     plugin: AnkiIntegration;
 
@@ -42,6 +41,7 @@ export class AddNoteFromMetadataModal extends Modal {
      * Initializes the modal with the provided app and plugin.
      * @param {App} app - The Obsidian app instance.
      * @param {AnkiIntegration} plugin - The AnkiIntegration plugin instance.
+     * @constructor
      */
     constructor(app: App, plugin: AnkiIntegration) {
         super(app);
@@ -177,15 +177,15 @@ export class AddNoteFromMetadataModal extends Modal {
     /**
      * Adds as many fields groups as the currently selected model has fields to the modal.
      * @param {HTMLDivElement} inputContainer - DIV containing all the generated inputs.
-     * @param {any} value - Currently selected model select value of the modelSelector (DropdownComponent).
-     * @param {FrontMatterCache} yaml - The YAML metadata of the currently active note.
+     * @param {any} selectedValue - Currently selected model select value of the modelSelector (DropdownComponent).
+     * @param {FrontMatterCache} inputValues - The YAML metadata of the currently active note.
      */
-    AddFieldsGroupsToModal(inputContainer: HTMLDivElement, value: any, yaml: FrontMatterCache) {
+    AddFieldsGroupsToModal(inputContainer: HTMLDivElement, selectedValue: any, inputValues: FrontMatterCache) {
         /**
          * @type {Object} selectedModel
          * @description The model object corresponding to the selected model name.
          */
-        const selectedModel: Object = FetchModelByName(this.plugin, value);
+        const selectedModel: Object = FetchModelByName(this.plugin, selectedValue);
         /**
          * @type {Array} fieldsGroupData
          * @description An array of input data storing as separate object (1 object = 1 input) the keys used to create each label-input pair and the values of each input.
@@ -200,7 +200,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * If its value is default, it displays a message requesting the user to select a model.
          * Else, it means that a model is selected, therefore, it creates the fields groups data and displays them.
          */
-        if (value === "default") {
+        if (selectedValue === "default") {
             AddParagraph(inputContainer, "Select a model to see its fields.");
             return;
         } else {
