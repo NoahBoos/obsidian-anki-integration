@@ -109,7 +109,7 @@ export class AddNoteFromCodeblockModal extends Modal {
          */
         modelSelector.onChange(async (value) => {
             const codeblockParameters = await this.GetCodeBlockParameters();
-            this.AddFieldsGroupsToModal(inputContainer, value, codeblockParameters["fields"]);
+            this.AddFieldsGroupsToModal(inputContainer, value, codeblockParameters);
         });
 
         this.onOpenAsync(deckSelector, modelSelector, inputContainer);
@@ -180,7 +180,7 @@ export class AddNoteFromCodeblockModal extends Modal {
              * @description
              * Create the different fields group objects and push them into fieldsGroupData.
              */
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
+            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues["fields"]);
             AddFieldGroups(inputContainer, fieldsGroupData);
         }
     }
