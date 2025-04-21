@@ -1,5 +1,7 @@
 import AnkiIntegration from "./main";
-import {DropdownComponent} from "obsidian";
+import {DropdownComponent, Modal, TFile} from "obsidian";
+import {AddNoteFromMetadataModal} from "./modals/AddNoteFromMetadataModal";
+import {AddNoteFromCodeblockModal} from "./modals/AddNoteFromCodeblockModal";
 
 /**
  * Fetches a model that has been saved in data.json by SynchronizeData().
@@ -302,7 +304,6 @@ export function AddButton(parent: HTMLElement, text: string, type: string, class
  * @param fieldsGroupData - The array in which fieldsGroupData Object will be push.
  * @param {Array} keys - The set of keys.
  * @param {Array} values - The set of values.
- * @constructor
  */
 export function CreateFieldsGroupData(fieldsGroupData: Array<Object>, keys: Array<string>, values: Object = {}) {
     for (let i = 0 ; i < keys.length; i++) {
@@ -315,5 +316,49 @@ export function CreateFieldsGroupData(fieldsGroupData: Array<Object>, keys: Arra
             fieldName: fieldName,
             fieldValue: fieldValue
         }
+    }
+}
+
+/**
+ * Function that returns the content of a given TFile.
+ * @param {TFile} fileData - The file that has to be read.
+ */
+export async function ReadFileContent(modal: Modal, fileData: TFile): Promise<string> {
+    return await modal.app.vault.read(fileData);
+}
+
+export async function AutoAssignDeck(deckSelector: DropdownComponent, noteParameters: Object) {
+    /**
+     * @description
+     * Check if the value of the Yaml Metadata "deck" exists as a value in a select of the dropdown menu.
+     */
+    let isDeckMetadataExistingAsDeckOption: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === noteParameters["deck"]);
+    if (isDeckMetadataExistingAsDeckOption) {
+        deckSelector.setValue(noteParameters["deck"]);
+    }
+}
+
+export async function AutoAssignModel(modelSelector: DropdownComponent, noteParameters: Object): Promise<void> {
+    /**
+     * @description
+     * Check if the value of the Yaml Metadata "model" exists as a value in a select of the dropdown menu.
+     */
+    let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
+    if (isModelMetadataExistingAsModelOption) {
+        modelSelector.setValue(noteParameters["model"]);
+    }
+}
+
+export async function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeblockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object): Promise<void> {
+    /**
+     * @description
+     * If there is no model metadata existing as model option, it displays the "Select a model..." message,
+     * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
+     */
+    let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
+    if (!isModelMetadataExistingAsModelOption) {
+        AddParagraph(inputContainer, "Select a model to see its fields.");
+    } else {
+        modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters["fields"]);
     }
 }
