@@ -359,6 +359,6 @@ export async function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNo
     if (!isModelMetadataExistingAsModelOption) {
         AddParagraph(inputContainer, "Select a model to see its fields.");
     } else {
-        modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters["fields"]);
+        modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters);
     }
 }
