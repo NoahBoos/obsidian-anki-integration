@@ -142,8 +142,19 @@ export class AddNoteFromCodeblockModal extends Modal {
         })
     }
 
+    /**
+     * Handles the closing of the modal by clearing the content container.
+     * Removes all elements within the modal's content area.
+     */
     onClose() {
+        /**
+         * @type {HTMLElement} contentEl
+         * @description The main content container of the modal.
+         */
+        const { contentEl } = this;
 
+        // Clear the content of the modal.
+        contentEl.empty();
     }
 
     /**
@@ -217,6 +228,7 @@ export class AddNoteFromCodeblockModal extends Modal {
         /**
          * @type {Object} codeblockParameters
          * @description The object that stores all the fields of the note that has to be created, along with their values.
+         * @remarks It has ""fields": {}" as a default child in order to store Anki note's fields related data.
          */
         const codeblockParameters: Object = {
             "fields": {}
@@ -227,7 +239,8 @@ export class AddNoteFromCodeblockModal extends Modal {
          */
         let match: Array<string> = []
         /**
-         * @description As long as there are string that match the regex, we add them as field of codeblockParameters or as field of codeblockParameters["fields"].
+         * @description As long as there are string that match the regex,
+         * we add them as field of codeblockParameters or as field of codeblockParameters["fields"].
          */
         while ((match = regex.exec(codeblock)) !== null) {
             /**
