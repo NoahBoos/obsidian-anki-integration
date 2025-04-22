@@ -197,8 +197,14 @@ export class AddNoteFromCodeblockModal extends Modal {
     }
 
     async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement): Promise<void> {
+        /**
+         * @type {Object} codeblockParameters
+         * @description Stores the values parsed by GetCodeBlockParameters().
+         */
         const codeblockParameters: Object = await this.GetCodeBlockParameters();
-
+        /**
+         * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
+         */
         await AutoAssignDeck(deckSelector, codeblockParameters);
         await AutoAssignModel(modelSelector, codeblockParameters);
         await AutoGenerateFields(this, modelSelector, inputContainer, codeblockParameters);
