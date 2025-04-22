@@ -196,6 +196,12 @@ export class AddNoteFromCodeblockModal extends Modal {
         }
     }
 
+    /**
+     * onOpen() async equivalent allowing asynchronous operations.
+     * @param {DropdownComponent} deckSelector - Dropdown component that allows the user to select a deck.
+     * @param {DropdownComponent} modelSelector - Dropdown component that allows the user to select a model.
+     * @param {HTMLDivElement} inputContainer - Speaking for itself.
+     */
     async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement): Promise<void> {
         /**
          * @type {Object} codeblockParameters
@@ -210,6 +216,13 @@ export class AddNoteFromCodeblockModal extends Modal {
         await AutoGenerateFields(this, modelSelector, inputContainer, codeblockParameters);
     }
 
+    /**
+     * Return the note's parameters defined in the codeblock.
+     * @description Method that :
+     * - retrieve the first codeblock using "AnkiIntegration" as its language in the open and currently active file in the instance of Obsidian.
+     * - extract each lines following a "key: value;" or "key: "value";" and push it an object that is returned by the function.
+     * @return {Object} codeblockParameters
+     */
     async GetCodeBlockParameters() {
         /**
          * @type {TFile} activeFileData
