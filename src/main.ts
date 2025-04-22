@@ -1,5 +1,6 @@
 // Import des différentes classes d'Obsidian.
 import {
+    MarkdownView,
     Plugin
 } from "obsidian";
 // Import des autres classes et jeux de variables nécessaires.
@@ -74,6 +75,47 @@ export default class AnkiIntegration extends Plugin {
                 new AddNoteFromCodeblockModal(this.app, this).open();
             }
         })
+
+        /**
+         *
+         */
+        this.registerMarkdownCodeBlockProcessor("AnkiIntegration", (source, element, context) => {
+            /**
+             * @type {MarkdownView} activeView
+             * @description
+             */
+            const activeView: MarkdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (this.settings.invisibleCodeblock === true && activeView.getMode() === "preview") {
+                return;
+            } else {
+                /**
+                 * @type {RegExpMatchArray} headerText
+                 * @description
+                 */
+                const headerText: RegExpMatchArray = source.match(/^[^\n]+/);
+                /**
+                 * @type {HTMLHeadingElement} h1
+                 * @description
+                 */
+                let h1: HTMLHeadingElement = element.createEl("h1", ({
+                    text: headerText[0]
+                }));
+                /**
+                 * @type {HTMLPreElement} pre
+                 * @description
+                 * @remarks
+                 */
+                let pre: HTMLPreElement = element.createEl("pre");
+                pre.removeClass("language-none");
+                /**
+                 * @type {HTMLElement} code
+                 * @description
+                 * @remarks
+                 */
+                let code: HTMLElement = pre.createEl("code", ({ text: source }));
+                code.removeClass("language-none");
+            }
+        });
     }
 
     async onunload() {
