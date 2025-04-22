@@ -321,42 +321,40 @@ export function CreateFieldsGroupData(fieldsGroupData: Array<Object>, keys: Arra
 
 /**
  * Function that returns the content of a given TFile.
+ * @param {Modal} modal - The instance of the modal that needs to read a file content.
  * @param {TFile} fileData - The file that has to be read.
  */
 export async function ReadFileContent(modal: Modal, fileData: TFile): Promise<string> {
     return await modal.app.vault.read(fileData);
 }
 
+/**
+ * Check if the value of noteParameters["deck"] exists as an option of deckSelector and pre-select it if it exists.
+ */
 export async function AutoAssignDeck(deckSelector: DropdownComponent, noteParameters: Object) {
-    /**
-     * @description
-     * Check if the value of the Yaml Metadata "deck" exists as a value in a select of the dropdown menu.
-     */
-    let isDeckMetadataExistingAsDeckOption: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === noteParameters["deck"]);
-    if (isDeckMetadataExistingAsDeckOption) {
+    let deckSelectorHasNoteParametersDeck: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === noteParameters["deck"]);
+    if (deckSelectorHasNoteParametersDeck) {
         deckSelector.setValue(noteParameters["deck"]);
     }
 }
 
+/**
+ * Check if the value of noteParameters["model"] exists as an option of modelSelector and pre-select it if it exists.
+ */
 export async function AutoAssignModel(modelSelector: DropdownComponent, noteParameters: Object): Promise<void> {
-    /**
-     * @description
-     * Check if the value of the Yaml Metadata "model" exists as a value in a select of the dropdown menu.
-     */
-    let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
-    if (isModelMetadataExistingAsModelOption) {
+    let modelSelectorHasNoteParametersModel: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
+    if (modelSelectorHasNoteParametersModel) {
         modelSelector.setValue(noteParameters["model"]);
     }
 }
 
+/**
+ * If there is no model metadata existing as model option, it displays the "Select a model..." message,
+ * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
+ */
 export async function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeblockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object): Promise<void> {
-    /**
-     * @description
-     * If there is no model metadata existing as model option, it displays the "Select a model..." message,
-     * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
-     */
-    let isModelMetadataExistingAsModelOption: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
-    if (!isModelMetadataExistingAsModelOption) {
+    let modelSelectorHasNoteParametersModel: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
+    if (!modelSelectorHasNoteParametersModel) {
         AddParagraph(inputContainer, "Select a model to see its fields.");
     } else {
         modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters);
