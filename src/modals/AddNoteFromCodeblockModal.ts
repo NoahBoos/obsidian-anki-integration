@@ -211,9 +211,9 @@ export class AddNoteFromCodeblockModal extends Modal {
         /**
          * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
          */
-        await AutoAssignDeck(deckSelector, codeblockParameters);
-        await AutoAssignModel(modelSelector, codeblockParameters);
-        await AutoGenerateFields(this, modelSelector, inputContainer, codeblockParameters);
+        AutoAssignDeck(deckSelector, codeblockParameters);
+        AutoAssignModel(modelSelector, codeblockParameters);
+        AutoGenerateFields(this, modelSelector, inputContainer, codeblockParameters);
     }
 
     /**
@@ -223,7 +223,7 @@ export class AddNoteFromCodeblockModal extends Modal {
      * - extract each lines following a "key: value;" or "key: "value";" and push it an object that is returned by the function.
      * @return {Object} codeblockParameters
      */
-    async GetCodeBlockParameters() {
+    async GetCodeBlockParameters(): Promise<Object> {
         /**
          * @type {TFile} activeFileData
          * @description The open and active file in the current instance of Obsidian.

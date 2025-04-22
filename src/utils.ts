@@ -331,7 +331,7 @@ export async function ReadFileContent(modal: Modal, fileData: TFile): Promise<st
 /**
  * Check if the value of noteParameters["deck"] exists as an option of deckSelector and pre-select it if it exists.
  */
-export async function AutoAssignDeck(deckSelector: DropdownComponent, noteParameters: Object) {
+export function AutoAssignDeck(deckSelector: DropdownComponent, noteParameters: Object) {
     let deckSelectorHasNoteParametersDeck: boolean = Array.from(deckSelector.selectEl.options).some(option => option.value === noteParameters["deck"]);
     if (deckSelectorHasNoteParametersDeck) {
         deckSelector.setValue(noteParameters["deck"]);
@@ -341,7 +341,7 @@ export async function AutoAssignDeck(deckSelector: DropdownComponent, noteParame
 /**
  * Check if the value of noteParameters["model"] exists as an option of modelSelector and pre-select it if it exists.
  */
-export async function AutoAssignModel(modelSelector: DropdownComponent, noteParameters: Object): Promise<void> {
+export function AutoAssignModel(modelSelector: DropdownComponent, noteParameters: Object) {
     let modelSelectorHasNoteParametersModel: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
     if (modelSelectorHasNoteParametersModel) {
         modelSelector.setValue(noteParameters["model"]);
@@ -352,7 +352,7 @@ export async function AutoAssignModel(modelSelector: DropdownComponent, notePara
  * If there is no model metadata existing as model option, it displays the "Select a model..." message,
  * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
  */
-export async function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeblockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object): Promise<void> {
+export function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeblockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object) {
     let modelSelectorHasNoteParametersModel: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
     if (!modelSelectorHasNoteParametersModel) {
         AddParagraph(inputContainer, "Select a model to see its fields.");
