@@ -12,11 +12,13 @@ import {
 // Anki Integration Settings declaration
 export interface AnkiIntegrationSettings {
     ankiData: Object;
+    invisibleCodeblock: boolean;
 }
 
 // Anki Integration Settings default value
 export const DEFAULT_SETTINGS: AnkiIntegrationSettings = {
-    ankiData: {}
+    ankiData: {},
+    invisibleCodeblock: true
 }
 
 export class AnkiIntegrationSettingTab extends PluginSettingTab {
@@ -51,6 +53,16 @@ export class AnkiIntegrationSettingTab extends PluginSettingTab {
                 .setCta()
                 .onClick(async () => {
                     await SynchronizeData(this.plugin);
+                }))
+        // Adding invisibleCodeblock toggle
+        new Setting(containerEl)
+            .setName("Enable invisible codeblock")
+            .setDesc("Toggle by default, define if Anki Integration codeblock should be hidden or not.")
+            .addToggle((toggle) => toggle
+                .setValue(this.plugin.settings.invisibleCodeblock)
+                .onChange(async (value) => {
+                    this.plugin.settings.invisibleCodeblock = value;
+                    await this.plugin.saveSetting();
                 }))
     }
 }
