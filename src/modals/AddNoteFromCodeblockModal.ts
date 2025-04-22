@@ -194,24 +194,61 @@ export class AddNoteFromCodeblockModal extends Modal {
     }
 
     async GetCodeBlockParameters() {
+        /**
+         * @type {TFile} activeFileData
+         * @description The open and active file in the current instance of Obsidian.
+         */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
+        /**
+         * @type {string} activeFileContent
+         * @description The whole content of the note.
+         */
         const activeFileContent: string = await ReadFileContent(this, activeFileData);
-
-        const codeblock = activeFileContent.match(/(```AnkiIntegration[\s\S]*?```)/)[1];
-
-        const regex = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
-
-        const codeblockParameters = {
+        /**
+         * @type {string} codeblock
+         * @description The first codeblock using "AnkiIntegration" as its language in activeFileContent.
+         */
+        const codeblock: string = activeFileContent.match(/(```AnkiIntegration[\s\S]*?```)/)[1];
+        /**
+         * @type {RegExp} regex
+         * @description A regular expression that is used to retrieve each line of the codeblock using a "Key: Value;" or "Key: "Value";" format.
+         */
+        const regex: RegExp = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
+        /**
+         * @type {Object} codeblockParameters
+         * @description The object that stores all the fields of the note that has to be created, along with their values.
+         */
+        const codeblockParameters: Object = {
             "fields": {}
         };
-        let match: Object = {};
-
+        /**
+         * @type {Array} match
+         * @description Stores all the result of regex.exec(codeblock).
+         */
+        let match: Array<string> = []
+        /**
+         * @description As long as there are string that match the regex, we add them as field of codeblockParameters or as field of codeblockParameters["fields"].
+         */
         while ((match = regex.exec(codeblock)) !== null) {
-            const mandatoryKeys = ["deck", "model"];
+            /**
+             * @type {Array<string>} codeblockFields
+             * @description All the fields that has to be added as direct child fields of codeblockParameters.
+             */
+            const codeblockChildFields: Array<string> = ["deck", "model"];
+            /**
+             * @type {string} key
+             * @description The key of the item that will be added to codeblockParameters.
+             */
             const key: string = match[1];
+            /**
+             * @type {string} value
+             * @description The value of the item that will be added to codeblockParameters.
+             */
             const value: string = match[2] || match[3];
-
-            if (mandatoryKeys.includes(key)) {
+            /**
+             * @description If/else statements allowing to add a value as a direct child of codeblockParameters or as a direct child of codeblockParameters["fields"].
+             */
+            if (codeblockChildFields.includes(key)) {
                 codeblockParameters[key] = value;
             } else {
                 codeblockParameters["fields"][key.toLowerCase()] = value;
