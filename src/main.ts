@@ -106,16 +106,18 @@ export default class AnkiIntegration extends Plugin {
             } else {
                 /**
                  * @type {RegExpMatchArray} headerText
-                 * @description The first line of the parsed code block.
+                 * @description The first line of the parsed code block.*
+                 * @legacy
                  */
-                const headerText: RegExpMatchArray = source.match(/^[^\n]+/);
+                // const headerText: RegExpMatchArray = source.match(/^[^\n]+/);
                 /**
                  * @type {HTMLHeadingElement} h1
                  * @description The header element used to "prefix" the code block.
+                 * @legacy
                  */
-                let h1: HTMLHeadingElement = element.createEl("h1", ({
-                    text: headerText[0]
-                }));
+                // let h1: HTMLHeadingElement = element.createEl("h1", ({
+                //     text: headerText[0]
+                // }));
                 /**
                  * @type {HTMLPreElement} pre
                  * @description A <pre> element that will store the <code> element.
