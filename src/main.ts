@@ -22,7 +22,7 @@ import {
     RequestPermission,
     SynchronizeData
 } from "./AnkiConnect";
-import {AddNoteFromCodeblockModal} from "./modals/AddNoteFromCodeblockModal";
+import {AddNoteFromCodeBlockModal} from "./modals/AddNoteFromCodeBlockModal";
 
 export default class AnkiIntegration extends Plugin {
     settings: AnkiIntegrationSettings;
@@ -88,7 +88,7 @@ export default class AnkiIntegration extends Plugin {
             id: 'add-a-new-note-to-code-block',
             name: 'Add a new note from code block',
             callback: () => {
-                new AddNoteFromCodeblockModal(this.app, this).open();
+                new AddNoteFromCodeBlockModal(this.app, this).open();
             }
         });
 

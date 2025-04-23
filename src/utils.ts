@@ -1,7 +1,7 @@
 import AnkiIntegration from "./main";
 import {DropdownComponent, Modal, TFile} from "obsidian";
 import {AddNoteFromMetadataModal} from "./modals/AddNoteFromMetadataModal";
-import {AddNoteFromCodeblockModal} from "./modals/AddNoteFromCodeblockModal";
+import {AddNoteFromCodeBlockModal} from "./modals/AddNoteFromCodeBlockModal";
 
 /**
  * Fetches a model that has been saved in data.json by SynchronizeData().
@@ -352,7 +352,7 @@ export function AutoAssignModel(modelSelector: DropdownComponent, noteParameters
  * If there is no model metadata existing as model option, it displays the "Select a model..." message,
  * else, since it means that a model has been preselected, it generates the fields groups and pre-fill them.
  */
-export function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeblockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object) {
+export function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFromCodeBlockModal, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, noteParameters: Object) {
     let modelSelectorHasNoteParametersModel: boolean = Array.from(modelSelector.selectEl.options).some(option => option.value === noteParameters["model"]);
     if (!modelSelectorHasNoteParametersModel) {
         AddParagraph(inputContainer, "Select a model to see its fields.");

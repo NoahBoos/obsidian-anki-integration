@@ -12,17 +12,17 @@ import {
 import {ProcessAddNote} from "../AnkiConnect";
 
 /**
- * A modal dialog for creating a new Anki note by using a codeblock content as pre-filled values.
+ * A modal dialog for creating a new Anki note by using a code block content as pre-filled values.
  *
  * @description
  * It provides options to select a deck and a model, and dynamically generates input fields based on the selected model's configuration.
- * It will pre-select both the deck to add the note in and the model to use to create the note by parsing the content of a codeblock using "AnkiIntegration" as language.
- * It will autofill fields of the note by parsing the content of a codeblock using "AnkiIntegration" as language.
+ * It will pre-select both the deck to add the note in and the model to use to create the note by parsing the content of a code block using "AnkiIntegration" as language.
+ * It will autofill fields of the note by parsing the content of a code block using "AnkiIntegration" as language.
  * It allows users to enter information and submit the data to create a new note.
  *
  * @extends Modal
  */
-export class AddNoteFromCodeblockModal extends Modal {
+export class AddNoteFromCodeBlockModal extends Modal {
     /**
      * @type {AnkiIntegration}
      * @description The plugin instance associated with the modal.
@@ -55,7 +55,7 @@ export class AddNoteFromCodeblockModal extends Modal {
         const { contentEl } = this;
         this.contentEl.focus();
 
-        AddTitle(contentEl, "Add a new note using codeblock");
+        AddTitle(contentEl, "Add a new note using code block");
         AddSubtitle(contentEl, "Deck & Model");
 
         /**
@@ -108,8 +108,8 @@ export class AddNoteFromCodeblockModal extends Modal {
          * @param {string} value - The selected model name.
          */
         modelSelector.onChange(async (value) => {
-            const codeblockParameters = await this.GetCodeBlockParameters();
-            this.AddFieldsGroupsToModal(inputContainer, value, codeblockParameters);
+            const codeBlockParameters = await this.GetCodeBlockParameters();
+            this.AddFieldsGroupsToModal(inputContainer, value, codeBlockParameters);
         });
 
         this.onOpenAsync(deckSelector, modelSelector, inputContainer);
@@ -204,24 +204,24 @@ export class AddNoteFromCodeblockModal extends Modal {
      */
     async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement): Promise<void> {
         /**
-         * @type {Object} codeblockParameters
+         * @type {Object} codeBlockParameters
          * @description Stores the values parsed by GetCodeBlockParameters().
          */
-        const codeblockParameters: Object = await this.GetCodeBlockParameters();
+        const codeBlockParameters: Object = await this.GetCodeBlockParameters();
         /**
          * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
          */
-        AutoAssignDeck(deckSelector, codeblockParameters);
-        AutoAssignModel(modelSelector, codeblockParameters);
-        AutoGenerateFields(this, modelSelector, inputContainer, codeblockParameters);
+        AutoAssignDeck(deckSelector, codeBlockParameters);
+        AutoAssignModel(modelSelector, codeBlockParameters);
+        AutoGenerateFields(this, modelSelector, inputContainer, codeBlockParameters);
     }
 
     /**
-     * Return the note's parameters defined in the codeblock.
+     * Return the note's parameters defined in the code block.
      * @description Method that :
-     * - retrieve the first codeblock using "AnkiIntegration" as its language in the open and currently active file in the instance of Obsidian.
+     * - retrieve the first code block using "AnkiIntegration" as its language in the open and currently active file in the instance of Obsidian.
      * - extract each lines following a "key: value;" or "key: "value";" and push it an object that is returned by the function.
-     * @return {Object} codeblockParameters
+     * @return {Object} codeBlockParameters
      */
     async GetCodeBlockParameters(): Promise<Object> {
         /**
@@ -235,58 +235,58 @@ export class AddNoteFromCodeblockModal extends Modal {
          */
         const activeFileContent: string = await ReadFileContent(this, activeFileData);
         /**
-         * @type {string} codeblock
-         * @description The first codeblock using "AnkiIntegration" as its language in activeFileContent.
+         * @type {string} codeBlock
+         * @description The first code block using "AnkiIntegration" as its language in activeFileContent.
          */
-        const codeblock: string = activeFileContent.match(/(```AnkiIntegration[\s\S]*?```)/)[1];
+        const codeBlock: string = activeFileContent.match(/(```AnkiIntegration[\s\S]*?```)/)[1];
         /**
          * @type {RegExp} regex
-         * @description A regular expression that is used to retrieve each line of the codeblock using a "Key: Value;" or "Key: "Value";" format.
+         * @description A regular expression that is used to retrieve each line of the code block using a "Key: Value;" or "Key: "Value";" format.
          */
         const regex: RegExp = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
         /**
-         * @type {Object} codeblockParameters
+         * @type {Object} codeBlockParameters
          * @description The object that stores all the fields of the note that has to be created, along with their values.
          * @remarks It has ""fields": {}" as a default child in order to store Anki note's fields related data.
          */
-        const codeblockParameters: Object = {
+        const codeBlockParameters: Object = {
             "fields": {}
         };
         /**
          * @type {Array} match
-         * @description Stores all the result of regex.exec(codeblock).
+         * @description Stores all the result of regex.exec(codeBlock).
          */
         let match: Array<string> = []
         /**
          * @description As long as there are string that match the regex,
-         * we add them as field of codeblockParameters or as field of codeblockParameters["fields"].
+         * we add them as field of codeBlockParameters or as field of codeBlockParameters["fields"].
          */
-        while ((match = regex.exec(codeblock)) !== null) {
+        while ((match = regex.exec(codeBlock)) !== null) {
             /**
-             * @type {Array<string>} codeblockFields
-             * @description All the fields that has to be added as direct child fields of codeblockParameters.
+             * @type {Array<string>} codeBlockFields
+             * @description All the fields that has to be added as direct child fields of codeBlockParameters.
              */
-            const codeblockChildFields: Array<string> = ["deck", "model"];
+            const codeBlockChildFields: Array<string> = ["deck", "model"];
             /**
              * @type {string} key
-             * @description The key of the item that will be added to codeblockParameters.
+             * @description The key of the item that will be added to codeBlockParameters.
              */
             const key: string = match[1];
             /**
              * @type {string} value
-             * @description The value of the item that will be added to codeblockParameters.
+             * @description The value of the item that will be added to codeBlockParameters.
              */
             const value: string = match[2] || match[3];
             /**
-             * @description If/else statements allowing to add a value as a direct child of codeblockParameters or as a direct child of codeblockParameters["fields"].
+             * @description If/else statements allowing to add a value as a direct child of codeBlockParameters or as a direct child of codeBlockParameters["fields"].
              */
-            if (codeblockChildFields.includes(key)) {
-                codeblockParameters[key] = value;
+            if (codeBlockChildFields.includes(key)) {
+                codeBlockParameters[key] = value;
             } else {
-                codeblockParameters["fields"][key.toLowerCase()] = value;
+                codeBlockParameters["fields"][key.toLowerCase()] = value;
             }
         }
 
-        return codeblockParameters;
+        return codeBlockParameters;
     }
 }
