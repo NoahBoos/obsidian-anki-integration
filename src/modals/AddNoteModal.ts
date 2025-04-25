@@ -121,7 +121,7 @@ export class AddNoteModal extends Modal {
                 "ankiIntegrationModal__container--flex-row"
             ]);
             const tagsInput: HTMLInputElement = AddInput(inputGroup, "text", "My tag::A super tag", null, [
-                "ankiIntegrationModal__input--width-fit-content"
+                "ankiIntegrationModal__input--field-sizing-content"
             ]);
             tagsInput.removeClasses([
                 "ankiIntegrationModal__input--default-width"
