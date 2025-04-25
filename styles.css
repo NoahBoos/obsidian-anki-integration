@@ -75,7 +75,30 @@
     gap: 16px;
 }
 
-/*.ankiIntegrationModal__icon--font-size * {*/
-/*    width: 48px !important;*/
-/*    color: red;*/
-/*}*/
+.ankiIntegrationModal__deleteInputButton--border {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.ankiIntegrationModal__tagInput--border {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.ankiIntegrationModal__tagInput--focus:focus {
+    box-shadow: inset 0 0 0 2px var(--background-modifier-border-focus) !important;
+    border: none;
+    transition: none !important;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.ankiIntegrationModal__tagInput--focus:focus + button {
+    box-shadow: inset 0 0 0 2px var(--background-modifier-border-focus);
+    transition: none !important;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.ankiIntegrationModal__icon--color-red svg {
+    color: var(--color-red);
+}
