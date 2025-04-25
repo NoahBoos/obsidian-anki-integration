@@ -6,6 +6,10 @@
     text-align: center;
 }
 
+.ankiIntegrationModal__h2--fit-content {
+    width: fit-content;
+}
+
 .ankiIntegrationModal__inputContainer--flex,
 .ankiIntegrationModal__dropdownContainer--flex {
     display: flex;

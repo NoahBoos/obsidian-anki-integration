@@ -89,7 +89,9 @@ export function AddSubtitle(parent: HTMLElement, subtitle: string, classes: stri
      * @remarks
      * Pushes into classes all CSS classes that are mandatory for a container.
      */
-    classes.push();
+    classes.push(
+        "ankiIntegrationModal__h2--fit-content"
+    );
     /**
      * @type {HTMLElement} createdEl
      * The created subtitle.
