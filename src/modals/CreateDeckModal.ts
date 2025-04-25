@@ -1,9 +1,9 @@
 import {
-    App,
+    App, ButtonComponent,
     Modal
 } from "obsidian";
 import {
-    CreateDeck, ProcessCreateDeck
+    ProcessCreateDeck
 } from "../AnkiConnect";
 import {
     AddTitle,
@@ -53,10 +53,10 @@ export class CreateDeckModal extends Modal {
         const inputEl: HTMLInputElement = AddInput(contentEl, "text", "Enter the name of your new deck.");
 
         /**
-         * @type {HTMLButtonElement} submitButtonEl
+         * @type {ButtonComponent} submitButtonEl
          * @description Submit button for the user to create the deck.
          */
-        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create a new deck", "submit");
+        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create a new deck", "submit");
 
         /**
          * @description
@@ -64,7 +64,7 @@ export class CreateDeckModal extends Modal {
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
-        submitButtonEl.addEventListener("click", async () => {
+        submitButtonEl.onClick(async () => {
             await ProcessCreateDeck(inputEl, this);
         });
         /**

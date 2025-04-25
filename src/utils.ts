@@ -1,5 +1,5 @@
 import AnkiIntegration from "./main";
-import {DropdownComponent, Modal, TFile} from "obsidian";
+import {ButtonComponent, DropdownComponent, Modal, TFile} from "obsidian";
 import {AddNoteFromMetadataModal} from "./modals/AddNoteFromMetadataModal";
 import {AddNoteFromCodeBlockModal} from "./modals/AddNoteFromCodeBlockModal";
 
@@ -260,12 +260,12 @@ export function AddFieldGroups(parent: HTMLElement, inputData: Array<Object>) {
 /**
  * Adds a button as a child of a given HTMLElement.
  * @param {HTMLElement} parent - The parent container to which the button will be added.
- * @param {string} text - A string containing the text the needs to be displayed.
- * @param {string} type - A string containing the type of the button.
+ * @param {string} text - A string containing the text that needs to be displayed.
+ * @param {string} icon - A string corresponding to the lucid icon identifier.
  * @param {string[]} classes - An array of string containing CSS classes to add to the created element.
- * @return {HTMLButtonElement} createdEl - The created button.
+ * @return {ButtonComponent} createdEl - The created button.
  */
-export function AddButton(parent: HTMLElement, text: string, type: string, classes: string[] = []): HTMLButtonElement {
+export function AddButton(parent: HTMLElement, text: string = null, icon: string = null, classes: string[] = []): ButtonComponent {
     /**
      * @remarks
      * Pushes into classes all CSS classes that are mandatory for a container.
@@ -276,21 +276,20 @@ export function AddButton(parent: HTMLElement, text: string, type: string, class
         "ankiIntegrationModal__button--padding"
     );
     /**
-     * @type {HTMLButtonElement} createdEl
+     * @type {ButtonComponent} createdEl
      * The created button.
-     * @remarks
-     * Defining the created button as an `HTMLButtonElement` instead of a generic `HTMLElement` ensures access to button-specific properties.
      */
-    let createdEl: HTMLButtonElement;
-    createdEl = parent.createEl("button", {
-        text: text,
-        attr: {
-            type: type
-        },
-        cls: [
-            classes.join(" ")
-        ]
-    });
+    let createdEl: ButtonComponent = new ButtonComponent(parent);
+    createdEl.setCta();
+    if (text) {
+        createdEl.setButtonText(text);
+    }
+    if (icon) {
+        createdEl.setIcon(icon);
+    }
+    classes.forEach(cssClass => {
+        createdEl.setClass(cssClass);
+    })
     return createdEl;
 }
 

@@ -1,4 +1,4 @@
-import {App, DropdownComponent, Modal, TFile} from "obsidian";
+import {App, ButtonComponent, DropdownComponent, Modal, TFile} from "obsidian";
 import AnkiIntegration from "../main";
 import {
     AddButton,
@@ -30,7 +30,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
     plugin: AnkiIntegration;
 
     /**
-     * Creates a new AddNoteFromCodeblockModal instance.
+     * Creates a new AddNoteFromCodeBlockModal instance.
      * Initializes the modal with provided app and plugin.
      * @param {App} app - The Obsidian app instance.
      * @param {AnkiIntegration} plugin - The AnkiIntegration plugin instance.
@@ -115,10 +115,10 @@ export class AddNoteFromCodeBlockModal extends Modal {
         this.onOpenAsync(deckSelector, modelSelector, inputContainer);
 
         /**
-         * @type {HTMLButtonElement} submitButtonEl
+         * @type {ButtonComponent} submitButtonEl
          * @description Submit button for the user to add the note.
          */
-        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create Note", "submit");
+        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create Note");
 
         /**
          * @description
@@ -126,7 +126,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
-        submitButtonEl.addEventListener("click", async () => {
+        submitButtonEl.onClick(async () => {
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
         });
         /**

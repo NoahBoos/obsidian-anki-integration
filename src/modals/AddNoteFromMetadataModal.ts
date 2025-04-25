@@ -1,5 +1,5 @@
 import {
-    App, DropdownComponent, FrontMatterCache, MetadataCache,
+    App, ButtonComponent, DropdownComponent, FrontMatterCache,
     Modal,
     TFile
 } from "obsidian";
@@ -126,10 +126,10 @@ export class AddNoteFromMetadataModal extends Modal {
         this.onOpenAsync(deckSelector, modelSelector, inputContainer, yaml);
 
         /**
-         * @type {HTMLButtonElement} submitButtonEl
+         * @type {ButtonComponent} submitButtonEl
          * @description Submit button for the user to add the note.
          */
-        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create Note", "submit");
+        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create Note");
 
         /**
          * @description
@@ -137,7 +137,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
-        submitButtonEl.addEventListener("click", async () => {
+        submitButtonEl.onClick(async () => {
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
         });
         /**
@@ -169,9 +169,9 @@ export class AddNoteFromMetadataModal extends Modal {
     }
 
     async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, yaml: FrontMatterCache): Promise<void> {
-        await AutoAssignDeck(deckSelector, yaml);
-        await AutoAssignModel(modelSelector, yaml);
-        await AutoGenerateFields(this, modelSelector, inputContainer, yaml);
+        AutoAssignDeck(deckSelector, yaml);
+        AutoAssignModel(modelSelector, yaml);
+        AutoGenerateFields(this, modelSelector, inputContainer, yaml);
     }
 
     /**

@@ -1,11 +1,10 @@
 import {
-    App,
+    App, ButtonComponent,
     Modal,
-    Notice
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
-    AddNote, ProcessAddNote
+    ProcessAddNote
 } from "../AnkiConnect";
 import {
     AddButton,
@@ -149,10 +148,10 @@ export class AddNoteModal extends Modal {
         });
 
         /**
-         * @type {HTMLButtonElement} submitButtonEl
+         * @type {ButtonComponent} submitButtonEl
          * @description Submit button for the user to add the note.
          */
-        const submitButtonEl: HTMLButtonElement = AddButton(contentEl, "Create note", "submit");
+        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create note");
 
         /**
          * @description
@@ -160,9 +159,10 @@ export class AddNoteModal extends Modal {
          * @async
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
-        submitButtonEl.addEventListener("click", async () => {
+        submitButtonEl.onClick(async () => {
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
-        });
+        })
+
         /**
          * @description
          * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessAddNote().
