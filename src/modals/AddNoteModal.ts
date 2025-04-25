@@ -9,7 +9,7 @@ import {
 import {
     AddButton,
     AddContainer,
-    AddDropdown, AddFieldGroups,
+    AddDropdown, AddFieldGroups, AddInput,
     AddOptionsToDropdownFromDataset,
     AddParagraph,
     AddSubtitle,
@@ -105,11 +105,28 @@ export class AddNoteModal extends Modal {
             "ankiIntegrationModal__button--default-width",
             "ankiIntegrationModal__button--default-margin",
             "ankiIntegrationModal__button--default-padding"
+        ]);
+
+        const tagsBody: HTMLDivElement = AddContainer(contentEl);
+        tagsBody.addClasses([
+            "ankiIntegrationModal__container--flex-row",
+            "ankiIntegrationModal__container--flex-wrap",
+            "ankiIntegrationModal__container--gap-16px"
         ])
 
         addTagFieldButton.onClick(async (value) => {
-            console.log(value);
-        })
+            const inputGroup: HTMLDivElement = AddContainer(tagsBody);
+            inputGroup.addClasses([
+                "ankiIntegrationModal__container--width-fit-content",
+                "ankiIntegrationModal__container--flex-row"
+            ]);
+            const tagsInput: HTMLInputElement = AddInput(inputGroup, "text", "My tag::A super tag", null, [
+                "ankiIntegrationModal__input--width-fit-content"
+            ]);
+            tagsInput.removeClasses([
+                "ankiIntegrationModal__input--default-width"
+            ]);
+        });
 
         // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
