@@ -126,6 +126,7 @@ export class AddNoteModal extends Modal {
             tagsInput.removeClasses([
                 "ankiIntegrationModal__input--default-width"
             ]);
+            tagsInput.focus();
         });
 
         // Add the "Fields" section subtitle.
