@@ -17,26 +17,41 @@
     gap: 8px;
 }
 
-.ankiIntegrationModal__input--width {
+.ankiIntegrationModal__input--default-width {
     width: 100%;
 }
 
-.ankiIntegrationModal__dropdown--width {
+.ankiIntegrationModal__dropdown--default-width {
     width: 100%;
 }
 
-.ankiIntegrationModal__button--width {
+.ankiIntegrationModal__button--default-width {
     width: 40%;
 }
 
-.ankiIntegrationModal__button--margin {
+.ankiIntegrationModal__button--default-margin {
     margin: 16px 30% 0;
 }
 
-.ankiIntegrationModal__button--padding {
+.ankiIntegrationModal__button--default-padding {
     padding: 4px 0;
 }
 
 .ankiIntegrationModal__paragraph--text-align {
     text-align: center;
 }
+
+.ankiIntegrationModal__container--flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.ankiIntegrationModal__container--flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/*.ankiIntegrationModal__icon--font-size * {*/
+/*    width: 48px !important;*/
+/*    color: red;*/
+/*}*/

@@ -148,7 +148,7 @@ export function AddDropdown(parent: HTMLElement, defaultString: string, classes:
      * Pushes into classes all CSS classes that are mandatory for a container.
      */
     classes.push(
-        "ankiIntegrationModal__dropdown--width"
+        "ankiIntegrationModal__dropdown--default-width"
     )
     /**
      * @type {DropdownComponent} createdEl
@@ -225,7 +225,7 @@ export function AddInput(parent: HTMLElement, type: string, placeholder: string 
      * Pushes into classes all CSS classes that are mandatory for a container.
      */
     classes.push(
-        "ankiIntegrationModal__input--width"
+        "ankiIntegrationModal__input--default-width"
     );
     /**
      * @type {HTMLInputElement} createdEl
@@ -271,9 +271,9 @@ export function AddButton(parent: HTMLElement, text: string = null, icon: string
      * Pushes into classes all CSS classes that are mandatory for a container.
      */
     classes.push(
-        "ankiIntegrationModal__button--width",
-        "ankiIntegrationModal__button--margin",
-        "ankiIntegrationModal__button--padding"
+        "ankiIntegrationModal__button--default-width",
+        "ankiIntegrationModal__button--default-margin",
+        "ankiIntegrationModal__button--default-padding"
     );
     /**
      * @type {ButtonComponent} createdEl
