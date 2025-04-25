@@ -3,7 +3,7 @@ import AnkiIntegration from "../main";
 import {
     AddButton,
     AddContainer,
-    AddDropdown, AddFieldGroups,
+    AddDropdown, AddFieldGroups, AddInput,
     AddOptionsToDropdownFromDataset, AddParagraph,
     AddSubtitle,
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, CreateFieldsGroupData, FetchModelByName,
@@ -92,6 +92,88 @@ export class AddNoteFromCodeBlockModal extends Modal {
         const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
         AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
 
+        /**
+         * @type {HTMLDivElement} tagsHeader
+         * @description A container serving as the head part of the tags section.
+         */
+        const tagsHeader: HTMLDivElement = AddContainer(contentEl, [
+            "ankiIntegrationModal__container--flex-row",
+            "ankiIntegrationModal__container--flex-align-center",
+            "ankiIntegrationModal__container--flex-justify-space-between",
+        ]);
+        AddSubtitle(tagsHeader, "Tags");
+        /**
+         * @type {ButtonComponent} addTagFieldButton
+         * @description Button used by the user to add a tag field in the pop-up.
+         */
+        let addTagFieldButton: ButtonComponent = AddButton(tagsHeader, "", "circle-plus");
+        addTagFieldButton.buttonEl.removeClasses([
+            "ankiIntegrationModal__button--default-width",
+            "ankiIntegrationModal__button--default-margin",
+            "ankiIntegrationModal__button--default-padding"
+        ]);
+        /**
+         * @type {HTMLDivElement} tagsBody
+         * @description A container serving as the body of the tags section.
+         */
+        const tagsBody: HTMLDivElement = AddContainer(contentEl);
+        tagsBody.addClasses([
+            "ankiIntegrationModal__container--flex-row",
+            "ankiIntegrationModal__container--flex-wrap",
+            "ankiIntegrationModal__container--gap-16px"
+        ])
+        /**
+         * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
+         */
+        addTagFieldButton.onClick(async () => {
+            /**
+             * @type {HTMLDivElement} inputGroup
+             * @description A container storing the input field and the delete input field button.
+             */
+            const tagInputGroup: HTMLDivElement = AddContainer(tagsBody);
+            tagInputGroup.addClasses([
+                "ankiIntegrationModal__container--width-fit-content",
+                "ankiIntegrationModal__container--flex-row"
+            ]);
+            /**
+             * @type {HTMLInputElement} tagInput
+             * @description A tag input field.
+             * @remarks Default width class has to be removed and replaced by a field-sizing width for the great-parent's wrap to work.
+             */
+            const tagInput: HTMLInputElement = AddInput(tagInputGroup, "text", "My tag::Super", null, [
+                "ankiIntegrationModal__input--field-sizing-content",
+                "ankiIntegrationModal__tagInput--border",
+                "ankiIntegrationModal__tagInput--focus"
+            ]);
+            tagInput.removeClasses([
+                "ankiIntegrationModal__input--default-width"
+            ]);
+            tagInput.id = 'tagInput';
+            /**
+             * @type {ButtonComponent} deleteTagInputButton
+             * @description A button allowing the user to delete the field group the button belongs to.
+             * @remarks For the button to look great along with the input, the CTA is disabled, a class is added and all the default classes are removed.
+             */
+            const deleteTagInputButton: ButtonComponent = AddButton(tagInputGroup, "", "x", [
+                "ankiIntegrationModal__deleteInputButton--border",
+                "ankiIntegrationModal__icon--color-red"
+            ]);
+            deleteTagInputButton.removeCta();
+            deleteTagInputButton.buttonEl.removeClasses([
+                "ankiIntegrationModal__button--default-width",
+                "ankiIntegrationModal__button--default-margin",
+                "ankiIntegrationModal__button--default-padding"
+            ]);
+            /**
+             * @description deleteTagInputButton's onClick() event listener used to delete an input group in tagsBody.
+             */
+            deleteTagInputButton.onClick(async () => {
+                tagInputGroup.remove();
+            })
+
+            tagInput.focus();
+        });
+
         AddSubtitle(contentEl, "Fields");
 
         /**
@@ -127,7 +209,13 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.onClick(async () => {
-            await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
+            const tagInputs = document.querySelectorAll('#tagInput');
+            let tags: Array<string> = [];
+            tagInputs.forEach((tagInput) => {
+                // @ts-ignore
+                tags.push(tagInput.value);
+            })
+            await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
         });
         /**
          * @description
@@ -137,7 +225,13 @@ export class AddNoteFromCodeBlockModal extends Modal {
          */
         this.contentEl.addEventListener("keydown", async (event) => {
             if (event.shiftKey && event.key === "Enter") {
-                await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
+                const tagInputs = document.querySelectorAll('#tagInput');
+                let tags: Array<string> = [];
+                tagInputs.forEach((tagInput) => {
+                    // @ts-ignore
+                    tags.push(tagInput.value);
+                })
+                await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
             }
         })
     }
