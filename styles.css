@@ -51,6 +51,14 @@
     flex-direction: column;
 }
 
+.ankiIntegrationModal__container--flex-align-center {
+    align-items: center;
+}
+
+.ankiIntegrationModal__container--flex-justify-space-between {
+    justify-content: space-between;
+}
+
 /*.ankiIntegrationModal__icon--font-size * {*/
 /*    width: 48px !important;*/
 /*    color: red;*/

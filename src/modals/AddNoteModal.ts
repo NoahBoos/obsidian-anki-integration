@@ -94,6 +94,23 @@ export class AddNoteModal extends Modal {
         const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
         AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
 
+        const tagsHeader: HTMLDivElement = AddContainer(contentEl, [
+            "ankiIntegrationModal__container--flex-row",
+            "ankiIntegrationModal__container--flex-align-center",
+            "ankiIntegrationModal__container--flex-justify-space-between",
+        ]);
+        AddSubtitle(tagsHeader, "Tags");
+        let addTagFieldButton: ButtonComponent = AddButton(tagsHeader, "", "circle-plus");
+        addTagFieldButton.buttonEl.removeClasses([
+            "ankiIntegrationModal__button--default-width",
+            "ankiIntegrationModal__button--default-margin",
+            "ankiIntegrationModal__button--default-padding"
+        ])
+
+        addTagFieldButton.onClick(async (value) => {
+            console.log(value);
+        })
+
         // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
 
