@@ -150,6 +150,7 @@ export class AddNoteModal extends Modal {
             tagInput.removeClasses([
                 "ankiIntegrationModal__input--default-width"
             ]);
+            tagInput.id = 'tagInput';
             /**
              * @type {ButtonComponent} deleteTagInputButton
              * @description A button allowing the user to delete the field group the button belongs to.
@@ -241,7 +242,13 @@ export class AddNoteModal extends Modal {
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.onClick(async () => {
-            await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
+            const tagInputs = document.querySelectorAll('#tagInput');
+            let tags: Array<string> = [];
+            tagInputs.forEach((tagInput) => {
+                // @ts-ignore
+                tags.push(tagInput.value);
+            })
+            await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
         })
 
         /**
@@ -252,7 +259,13 @@ export class AddNoteModal extends Modal {
          */
         this.contentEl.addEventListener("keydown", async (event) => {
             if (event.shiftKey && event.key === "Enter") {
-                await ProcessAddNote(deckSelector, modelSelector, inputContainer, this);
+                const tagInputs = document.querySelectorAll('#tagInput');
+                let tags: Array<string> = [];
+                tagInputs.forEach((tagInput) => {
+                    // @ts-ignore
+                    tags.push(tagInput.value);
+                })
+                await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
             }
         })
     }

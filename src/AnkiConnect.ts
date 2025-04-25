@@ -303,16 +303,18 @@ export async function ProcessCreateDeck(inputEl: HTMLInputElement, modal: Modal)
  * @param {string} deckName - The name of the Anki deck where the note will be added.
  * @param {string} modelName - The name of the Anki model to use for the note.
  * @param {Object} fields - An object containing the fields of the note.
+ * @param {Array<string>} tags - An array containing all the tags as strings.
  * @returns {Promise<boolean>} A promise that resolves to `true` if the note was successfully added, otherwise `false`.
  */
-export async function AddNote(deckName: string, modelName: string, fields: Object): Promise<boolean> {
+export async function AddNote(deckName: string, modelName: string, fields: Object, tags: Array<string> = []): Promise<boolean> {
     try {
         // Attempt to create the note in Anki.
         await Invoke("addNote", {
             "note": {
                 "deckName": deckName,
                 "modelName": modelName,
-                "fields": fields
+                "fields": fields,
+                "tags": tags
             }
         });
 
@@ -342,9 +344,10 @@ export async function AddNote(deckName: string, modelName: string, fields: Objec
  * @param {DropdownComponent} deckSelector - Dropdown component storing deck-related data.
  * @param {DropdownComponent} modelSelector - Dropdown component storing model-related data.
  * @param {HTMLDivElement} inputContainer - Speaking for itself.
+ * @param {Array<string>} tags - An array containing all the tags as strings.
  * @param {Modal} modal - The opened modal itself.
  */
-export async function ProcessAddNote(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, modal: Modal): Promise<boolean> {
+export async function ProcessAddNote(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, tags: Array<string> = [], modal: Modal): Promise<boolean> {
     /**
      * @type {string} deckName
      * @definition The name of the deck selected for the note.
@@ -409,7 +412,8 @@ export async function ProcessAddNote(deckSelector: DropdownComponent, modelSelec
     const result: boolean = await AddNote(
         deckName,
         modelName,
-        modelFields
+        modelFields,
+        tags
     );
 
     if (result === false) {
