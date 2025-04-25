@@ -361,3 +361,17 @@ export function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFrom
         modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters);
     }
 }
+
+/**
+ * Build an array that stores all tags entered by the user in the form used to add a note.
+ * @return {Array<string>} tags
+ */
+export function BuildTagsArray(): Array<string> {
+    const tagInputs = document.querySelectorAll('#tagInput');
+    let tags: Array<string> = [];
+    tagInputs.forEach((tagInput) => {
+        // @ts-ignore
+        tags.push(tagInput.value);
+    })
+    return tags;
+}

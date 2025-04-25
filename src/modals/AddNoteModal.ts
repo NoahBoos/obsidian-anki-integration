@@ -13,7 +13,7 @@ import {
     AddOptionsToDropdownFromDataset,
     AddParagraph,
     AddSubtitle,
-    AddTitle, CreateFieldsGroupData,
+    AddTitle, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
 
@@ -242,12 +242,7 @@ export class AddNoteModal extends Modal {
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.onClick(async () => {
-            const tagInputs = document.querySelectorAll('#tagInput');
-            let tags: Array<string> = [];
-            tagInputs.forEach((tagInput) => {
-                // @ts-ignore
-                tags.push(tagInput.value);
-            })
+            const tags: Array<string> = BuildTagsArray();
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
         })
 
@@ -259,12 +254,7 @@ export class AddNoteModal extends Modal {
          */
         this.contentEl.addEventListener("keydown", async (event) => {
             if (event.shiftKey && event.key === "Enter") {
-                const tagInputs = document.querySelectorAll('#tagInput');
-                let tags: Array<string> = [];
-                tagInputs.forEach((tagInput) => {
-                    // @ts-ignore
-                    tags.push(tagInput.value);
-                })
+                const tags: Array<string> = BuildTagsArray();
                 await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
             }
         })

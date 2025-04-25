@@ -3,10 +3,19 @@ import AnkiIntegration from "../main";
 import {
     AddButton,
     AddContainer,
-    AddDropdown, AddFieldGroups, AddInput,
-    AddOptionsToDropdownFromDataset, AddParagraph,
+    AddDropdown,
+    AddFieldGroups,
+    AddInput,
+    AddOptionsToDropdownFromDataset,
+    AddParagraph,
     AddSubtitle,
-    AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, CreateFieldsGroupData, FetchModelByName,
+    AddTitle,
+    AutoAssignDeck,
+    AutoAssignModel,
+    AutoGenerateFields,
+    BuildTagsArray,
+    CreateFieldsGroupData,
+    FetchModelByName,
     ReadFileContent
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
@@ -209,12 +218,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @param {MouseEvent} event - The click event triggered by the submit button.
          */
         submitButtonEl.onClick(async () => {
-            const tagInputs = document.querySelectorAll('#tagInput');
-            let tags: Array<string> = [];
-            tagInputs.forEach((tagInput) => {
-                // @ts-ignore
-                tags.push(tagInput.value);
-            })
+            const tags: Array<string> = BuildTagsArray();
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
         });
         /**
@@ -225,12 +229,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
          */
         this.contentEl.addEventListener("keydown", async (event) => {
             if (event.shiftKey && event.key === "Enter") {
-                const tagInputs = document.querySelectorAll('#tagInput');
-                let tags: Array<string> = [];
-                tagInputs.forEach((tagInput) => {
-                    // @ts-ignore
-                    tags.push(tagInput.value);
-                })
+                const tags: Array<string> = BuildTagsArray();
                 await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
             }
         })
