@@ -280,12 +280,13 @@ export class AddNoteFromCodeBlockModal extends Modal {
             AddParagraph(inputContainer, "Select a model to see its fields.");
             return;
         } else {
-            /**
-             * @description
-             * Create the different fields group objects and push them into fieldsGroupData.
-             */
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues["fields"]);
-            AddFieldGroups(inputContainer, fieldsGroupData);
+            if (inputValues) {
+                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
+                AddFieldGroups(inputContainer, fieldsGroupData);
+            } else {
+                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
+                AddFieldGroups(inputContainer, fieldsGroupData);
+            }
         }
     }
 
@@ -301,12 +302,16 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @description Stores the values parsed by GetCodeBlockParameters().
          */
         const codeBlockParameters: Object = await this.GetCodeBlockParameters();
-        /**
-         * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
-         */
-        AutoAssignDeck(deckSelector, codeBlockParameters);
-        AutoAssignModel(modelSelector, codeBlockParameters);
-        AutoGenerateFields(this, modelSelector, inputContainer, codeBlockParameters);
+        if (!codeBlockParameters) {
+            this.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), null);
+        } else {
+            /**
+             * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
+             */
+            AutoAssignDeck(deckSelector, codeBlockParameters);
+            AutoAssignModel(modelSelector, codeBlockParameters);
+            AutoGenerateFields(this, modelSelector, inputContainer, codeBlockParameters);
+        }
     }
 
     /**
@@ -320,8 +325,12 @@ export class AddNoteFromCodeBlockModal extends Modal {
         /**
          * @type {TFile} activeFileData
          * @description The open and active file in the current instance of Obsidian.
+         * @remarks Since we can't retrieve a code block if no file is opened, if activeFileData is null, we shut down the function.
          */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
+        if (!activeFileData) {
+            return;
+        }
         /**
          * @type {string} activeFileContent
          * @description The whole content of the note.
