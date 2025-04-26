@@ -69,7 +69,10 @@ export class AddNoteFromMetadataModal extends Modal {
          * @description The YAML metadata stored in an object under the key: "value" format.
          */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
-        const yaml: FrontMatterCache = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
+        let yaml: FrontMatterCache = null;
+        if (activeFileData) {
+            yaml = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
+        }
 
         // Add the title and subtitle to the modal.
         AddTitle(contentEl, "Add a new note using metadata");
