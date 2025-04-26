@@ -205,6 +205,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @param {string} value - The selected model name.
          */
         modelSelector.onChange(async (value) => {
+            // console.log(yaml);
             this.AddFieldsGroupsToModal(inputContainer, value, yaml);
         });
 
@@ -269,6 +270,8 @@ export class AddNoteFromMetadataModal extends Modal {
      * @param {FrontMatterCache} inputValues - The YAML metadata of the currently active note.
      */
     AddFieldsGroupsToModal(inputContainer: HTMLDivElement, selectedValue: any, inputValues: FrontMatterCache) {
+        inputContainer.empty();
+
         /**
          * @type {Object} selectedModel
          * @description The model object corresponding to the selected model name.
@@ -280,8 +283,6 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const fieldsGroupData: Array<Object> = [];
 
-        inputContainer.empty();
-
         /**
          * @description
          * Checks the currently selected option of the dropdown.
@@ -292,12 +293,13 @@ export class AddNoteFromMetadataModal extends Modal {
             AddParagraph(inputContainer, "Select a model to see its fields.");
             return;
         } else {
-            /**
-             * @description
-             * Create the different fields group objects and push them into fieldsGroupData.
-             */
-            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
-            AddFieldGroups(inputContainer, fieldsGroupData);
+            if (inputValues) {
+                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
+                AddFieldGroups(inputContainer, fieldsGroupData);
+            } else {
+                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
+                AddFieldGroups(inputContainer, fieldsGroupData);
+            }
         }
     }
 }
