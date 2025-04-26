@@ -205,17 +205,18 @@ export class AddNoteFromMetadataModal extends Modal {
          * @param {string} value - The selected model name.
          */
         modelSelector.onChange(async (value) => {
-            // console.log(yaml);
             this.AddFieldsGroupsToModal(inputContainer, value, yaml);
         });
 
         /**
-         * @description If yaml isn't null, trigger the autofill functions.
+         * @description If yaml isn't null, trigger the autofill functions. Else, display the "Select a model [...]" message.
          */
         if (yaml != null) {
             AutoAssignDeck(deckSelector, yaml);
             AutoAssignModel(modelSelector, yaml);
             AutoGenerateFields(this, modelSelector, inputContainer, yaml);
+        } else {
+            AddParagraph(inputContainer, "Select a model to see its fields.");
         }
 
         /**
