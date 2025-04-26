@@ -56,7 +56,7 @@ export class CreateDeckModal extends Modal {
          * @type {ButtonComponent} submitButtonEl
          * @description Submit button for the user to create the deck.
          */
-        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create a new deck", "submit");
+        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create a new deck");
 
         /**
          * @description
