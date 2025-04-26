@@ -208,7 +208,14 @@ export class AddNoteFromMetadataModal extends Modal {
             this.AddFieldsGroupsToModal(inputContainer, value, yaml);
         });
 
-        this.onOpenAsync(deckSelector, modelSelector, inputContainer, yaml);
+        /**
+         * @description If yaml isn't null, trigger the autofill functions.
+         */
+        if (yaml != null) {
+            AutoAssignDeck(deckSelector, yaml);
+            AutoAssignModel(modelSelector, yaml);
+            AutoGenerateFields(this, modelSelector, inputContainer, yaml);
+        }
 
         /**
          * @type {ButtonComponent} submitButtonEl
@@ -253,12 +260,6 @@ export class AddNoteFromMetadataModal extends Modal {
 
         // Clear the content of the modal.
         contentEl.empty();
-    }
-
-    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, yaml: FrontMatterCache): Promise<void> {
-        AutoAssignDeck(deckSelector, yaml);
-        AutoAssignModel(modelSelector, yaml);
-        AutoGenerateFields(this, modelSelector, inputContainer, yaml);
     }
 
     /**
