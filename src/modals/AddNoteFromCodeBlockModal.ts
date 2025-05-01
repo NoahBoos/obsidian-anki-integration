@@ -282,6 +282,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
         } else {
             if (inputValues) {
                 CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
+                console.log(inputValues);
                 AddFieldGroups(inputContainer, fieldsGroupData);
             } else {
                 CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
@@ -302,6 +303,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @description Stores the values parsed by GetCodeBlockParameters().
          */
         const codeBlockParameters: Object = await this.GetCodeBlockParameters();
+        // console.log(codeBlockParameters);
         if (!codeBlockParameters) {
             this.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), null);
         } else {

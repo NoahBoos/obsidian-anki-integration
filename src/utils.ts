@@ -310,13 +310,43 @@ export function CreateFieldsGroupData(fieldsGroupData: Array<Object>, keys: Arra
     for (let i = 0 ; i < keys.length; i++) {
         const fieldName = keys[i];
         let fieldValue = null;
-        if (values.hasOwnProperty(fieldName.toLowerCase())) {
-            fieldValue = values[fieldName.toLowerCase()];
+        if (values["fields"]) {
+            fieldValue = ExtractValueFromCodeBlock(fieldValue, values, fieldName);
+        } else {
+            fieldValue = ExtractValueFromMetadata(fieldValue, values, fieldName);
         }
         fieldsGroupData[i] = {
             fieldName: fieldName,
             fieldValue: fieldValue
         }
+    }
+}
+
+/**
+ * Extract value from metadata.
+ * @param {string} fieldValue - The value to change.
+ * @param {Object} values - An object storing the gathered values to draw in.
+ * @param {string} fieldName - The name of the field the value has to be taken for.
+ * @return {string} fieldValue
+ */
+function ExtractValueFromMetadata(fieldValue: string, values: Object, fieldName: string): string {
+    if (values.hasOwnProperty(fieldName.toLowerCase())) {
+        fieldValue = values[fieldName.toLowerCase()];
+        return fieldValue;
+    }
+}
+
+/**
+ * Extract value from code block.
+ * @param {string} fieldValue - The value to change.
+ * @param {Object} values - An object storing the gathered values to draw in.
+ * @param {string} fieldName - The name of the field the value has to be taken for.
+ * @return {string} fieldValue
+ */
+function ExtractValueFromCodeBlock(fieldValue: string, values: Object, fieldName: string): string {
+    if (values["fields"].hasOwnProperty(fieldName.toLowerCase())) {
+        fieldValue = values["fields"][fieldName.toLowerCase()];
+        return fieldValue;
     }
 }
 
