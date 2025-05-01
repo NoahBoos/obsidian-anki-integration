@@ -409,9 +409,10 @@ export function BuildTagsArray(): Array<string> {
 /**
  * Adds a div as a child of a given HTMLElement. The div contains an input and a button.
  * @param {HTMLElement} parent - The parent container to which the button will be added.
+ * @param {string} tagValue - Speaking for itself.
  * @return {HTMLDivElement} tagInputGroup
  */
-export function AddTagInputGroup(parent: HTMLElement, tagValue: string = null) {
+export function AddTagInputGroup(parent: HTMLElement, tagValue: string = null): HTMLDivElement {
     /**
      * @type {HTMLDivElement} inputGroup
      * @description A container storing the input field and the delete input field button.
