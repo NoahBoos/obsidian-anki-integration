@@ -13,7 +13,7 @@ import {
     AddDropdown, AddFieldGroups, AddInput,
     AddOptionsToDropdownFromDataset,
     AddParagraph,
-    AddSubtitle,
+    AddSubtitle, AddTagInputGroup,
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
@@ -140,52 +140,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
          */
         addTagFieldButton.onClick(async () => {
-            /**
-             * @type {HTMLDivElement} inputGroup
-             * @description A container storing the input field and the delete input field button.
-             */
-            const tagInputGroup: HTMLDivElement = AddContainer(tagsBody);
-            tagInputGroup.addClasses([
-                "ankiIntegrationModal__container--width-fit-content",
-                "ankiIntegrationModal__container--flex-row"
-            ]);
-            /**
-             * @type {HTMLInputElement} tagInput
-             * @description A tag input field.
-             * @remarks Default width class has to be removed and replaced by a field-sizing width for the great-parent's wrap to work.
-             */
-            const tagInput: HTMLInputElement = AddInput(tagInputGroup, "text", "My tag::Super", null, [
-                "ankiIntegrationModal__input--field-sizing-content",
-                "ankiIntegrationModal__tagInput--border",
-                "ankiIntegrationModal__tagInput--focus"
-            ]);
-            tagInput.removeClasses([
-                "ankiIntegrationModal__input--default-width"
-            ]);
-            tagInput.id = 'tagInput';
-            /**
-             * @type {ButtonComponent} deleteTagInputButton
-             * @description A button allowing the user to delete the field group the button belongs to.
-             * @remarks For the button to look great along with the input, the CTA is disabled, a class is added and all the default classes are removed.
-             */
-            const deleteTagInputButton: ButtonComponent = AddButton(tagInputGroup, "", "x", [
-                "ankiIntegrationModal__deleteInputButton--border",
-                "ankiIntegrationModal__icon--color-red"
-            ]);
-            deleteTagInputButton.removeCta();
-            deleteTagInputButton.buttonEl.removeClasses([
-                "ankiIntegrationModal__button--default-width",
-                "ankiIntegrationModal__button--default-margin",
-                "ankiIntegrationModal__button--default-padding"
-            ]);
-            /**
-             * @description deleteTagInputButton's onClick() event listener used to delete an input group in tagsBody.
-             */
-            deleteTagInputButton.onClick(async () => {
-                tagInputGroup.remove();
-            })
-
-            tagInput.focus();
+            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody);
         });
 
         // Add the "Fields" section subtitle.
