@@ -354,7 +354,8 @@ export class AddNoteFromCodeBlockModal extends Modal {
          * @remarks It has ""fields": {}" as a default child in order to store Anki note's fields related data.
          */
         const codeBlockParameters: Object = {
-            "fields": {}
+            "fields": {},
+            "tags": {}
         };
         /**
          * @type {Array} match
