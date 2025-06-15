@@ -8,7 +8,7 @@ import {
     AddInput,
     AddOptionsToDropdownFromDataset,
     AddParagraph,
-    AddSubtitle,
+    AddSubtitle, AddTagInputGroup,
     AddTitle,
     AutoAssignDeck,
     AutoAssignModel,
@@ -162,7 +162,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
             this.AddFieldsGroupsToModal(inputContainer, value, codeBlockParameters);
         });
 
-        this.onOpenAsync(deckSelector, modelSelector, inputContainer);
+        this.onOpenAsync(deckSelector, modelSelector, tagsBody, inputContainer);
 
         /**
          * @type {ButtonComponent} submitButtonEl
@@ -254,9 +254,10 @@ export class AddNoteFromCodeBlockModal extends Modal {
      * onOpen() async equivalent allowing asynchronous operations.
      * @param {DropdownComponent} deckSelector - Dropdown component that allows the user to select a deck.
      * @param {DropdownComponent} modelSelector - Dropdown component that allows the user to select a model.
+     * @param {HTMLDivElement} tagsBody - Speaking for itself.
      * @param {HTMLDivElement} inputContainer - Speaking for itself.
      */
-    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement): Promise<void> {
+    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, tagsBody: HTMLDivElement, inputContainer: HTMLDivElement): Promise<void> {
         /**
          * @type {Object} codeBlockParameters
          * @description Stores the values parsed by GetCodeBlockParameters().
@@ -271,6 +272,11 @@ export class AddNoteFromCodeBlockModal extends Modal {
              */
             AutoAssignDeck(deckSelector, codeBlockParameters);
             AutoAssignModel(modelSelector, codeBlockParameters);
+            if (codeBlockParameters["tags"] != null) {
+                for (let i = 0; i < codeBlockParameters["tags"].length; i++) {
+                    AddTagInputGroup(tagsBody, codeBlockParameters["tags"][i]);
+                }
+            }
             AutoGenerateFields(this, modelSelector, inputContainer, codeBlockParameters);
         }
     }
@@ -308,6 +314,11 @@ export class AddNoteFromCodeBlockModal extends Modal {
          */
         const regex: RegExp = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
         /**
+         * @type {RegExp} tagsRegex
+         * @description A regular expression used to retrieve tags from the extracted corresponding line.
+         */
+        const tagsRegex: RegExp = /"([^"]+)"/g;
+        /**
          * @type {Object} codeBlockParameters
          * @description The object that stores all the fields of the note that has to be created, along with their values.
          * @remarks It has ""fields": {}" as a default child in order to store Anki note's fields related data.
@@ -330,7 +341,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
              * @type {Array<string>} codeBlockFields
              * @description All the fields that has to be added as direct child fields of codeBlockParameters.
              */
-            const codeBlockChildFields: Array<string> = ["deck", "model"];
+            const codeBlockChildFields: Array<string> = ["deck", "model", "tags"];
             /**
              * @type {string} key
              * @description The key of the item that will be added to codeBlockParameters.
@@ -345,7 +356,15 @@ export class AddNoteFromCodeBlockModal extends Modal {
              * @description If/else statements allowing to add a value as a direct child of codeBlockParameters or as a direct child of codeBlockParameters["fields"].
              */
             if (codeBlockChildFields.includes(key)) {
-                codeBlockParameters[key] = value;
+                if (key == "tags") {
+                    codeBlockParameters[key] = [];
+                    while ((match = tagsRegex.exec(value)) !== null) {
+                        const tag = match[1];
+                        codeBlockParameters[key].push(tag);
+                    }
+                } else {
+                    codeBlockParameters[key] = value;
+                }
             } else {
                 codeBlockParameters["fields"][key.toLowerCase()] = value;
             }
