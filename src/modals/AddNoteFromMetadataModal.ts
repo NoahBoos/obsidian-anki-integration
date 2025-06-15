@@ -137,8 +137,10 @@ export class AddNoteFromMetadataModal extends Modal {
             "ankiIntegrationModal__container--gap-16px"
         ])
 
-        for (let i = 0; i < yaml["cardTags"].length; i++) {
-            AddTagInputGroup(tagsBody, yaml["cardTags"][i]);
+        if (yaml["cardTags"] != null) {
+            for (let i = 0; i < yaml["cardTags"].length; i++) {
+                AddTagInputGroup(tagsBody, yaml["cardTags"][i]);
+            }
         }
         /**
          * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
