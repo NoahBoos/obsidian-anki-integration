@@ -6,7 +6,7 @@
 
 *Here is a link to the GitHub repository of this project : https://github.com/NoahBoos/obsidian-anki-integration.*
 
-This software and its source code are distributed under the terms of the Rift Open Source Software License v1.0.
+This software and its source code are distributed under the terms of the Rift Open Source Software License v2.0.
 
 ### Meaning of terms used in this license :
 - License : This document is a license. It is the legal document that defines the rights individuals or groups have regarding the project it's referring to (see header for information about this). It outlines how the project can be used, modified, and distributed in addition to other important information. This document must be included with the project whenever it is downloaded or shared.
