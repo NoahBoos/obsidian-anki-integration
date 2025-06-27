@@ -137,7 +137,7 @@ export class AddNoteFromMetadataModal extends Modal {
             "ankiIntegrationModal__container--gap-16px"
         ])
 
-        if (yaml["cardTags"] != null) {
+        if (yaml != null && yaml["cardTags"] != null) {
             for (let i = 0; i < yaml["cardTags"].length; i++) {
                 AddTagInputGroup(tagsBody, yaml["cardTags"][i]);
             }
