@@ -135,9 +135,12 @@ export class AddNoteFromMetadataModal extends Modal {
             "ankiIntegrationModal__container--flex-row",
             "ankiIntegrationModal__container--flex-wrap",
             "ankiIntegrationModal__container--gap-16px"
-        ])
+        ]);
+
+        const tagsBodyParagraph: HTMLElement = AddParagraph(tagsBody, "No tags will be added to this note, click the \"+\" button to add a new one.");
 
         if (yaml != null && yaml["cardTags"] != null) {
+            tagsBody.removeChild(tagsBodyParagraph);
             for (let i = 0; i < yaml["cardTags"].length; i++) {
                 AddTagInputGroup(tagsBody, yaml["cardTags"][i]);
             }
@@ -146,6 +149,9 @@ export class AddNoteFromMetadataModal extends Modal {
          * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
          */
         addTagFieldButton.onClick(async () => {
+            if (tagsBody.firstChild == tagsBodyParagraph) {
+                tagsBody.removeChild(tagsBodyParagraph);
+            }
             const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody);
         });
 
