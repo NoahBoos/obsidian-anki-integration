@@ -133,10 +133,6 @@ export class AddNoteModal extends Modal {
              * @description A container storing the input field and the delete input field button.
              */
             const tagInputGroup: HTMLDivElement = AddContainer(tagsBody);
-            tagInputGroup.addClasses([
-                "ankiIntegrationModal__container--width-fit-content",
-                "ankiIntegrationModal__container--flex-row"
-            ]);
             /**
              * @type {HTMLInputElement} tagInput
              * @description A tag input field.
