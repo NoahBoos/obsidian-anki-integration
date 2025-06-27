@@ -131,10 +131,16 @@ export class AddNoteFromCodeBlockModal extends Modal {
             "ankiIntegrationModal__container--flex-wrap",
             "ankiIntegrationModal__container--gap-16px"
         ])
+
+        const tagsBodyParagraph: HTMLElement = AddParagraph(tagsBody, "No tags will be added to this note, click the \"+\" button to add a new one.");
+
         /**
          * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
          */
         addTagFieldButton.onClick(async () => {
+            if (tagsBody.firstChild == tagsBodyParagraph) {
+                tagsBody.removeChild(tagsBodyParagraph);
+            }
             /**
              * @type {HTMLDivElement} inputGroup
              * @description A container storing the input field and the delete input field button.
@@ -273,6 +279,9 @@ export class AddNoteFromCodeBlockModal extends Modal {
             AutoAssignDeck(deckSelector, codeBlockParameters);
             AutoAssignModel(modelSelector, codeBlockParameters);
             if (codeBlockParameters["tags"] != null) {
+                if (codeBlockParameters["tags"].length > 0) {
+                    tagsBody.removeChild(tagsBody.children[0]);
+                }
                 for (let i = 0; i < codeBlockParameters["tags"].length; i++) {
                     AddTagInputGroup(tagsBody, codeBlockParameters["tags"][i]);
                 }
