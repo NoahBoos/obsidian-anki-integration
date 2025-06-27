@@ -45,6 +45,10 @@
     text-align: center;
 }
 
+.ankiIntegrationModal__paragraph--default-width {
+    width: 100%;
+}
+
 .ankiIntegrationModal__container--flex-row {
     display: flex;
     flex-direction: row;

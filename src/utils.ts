@@ -119,7 +119,8 @@ export function AddParagraph(parent: HTMLElement, text: string, classes: string[
      * Pushes into classes all CSS classes that are mandatory for a container.
      */
     classes.push(
-        "ankiIntegrationModal__paragraph--text-align"
+        "ankiIntegrationModal__paragraph--text-align",
+        "ankiIntegrationModal__paragraph--default-width"
     );
     /**
      * @type {HTMLElement} createdEl
