@@ -142,7 +142,7 @@ export class AddNoteFromMetadataModal extends Modal {
         if (yaml != null && yaml["cardTags"] != null) {
             tagsBody.removeChild(tagsBodyParagraph);
             for (let i = 0; i < yaml["cardTags"].length; i++) {
-                AddTagInputGroup(tagsBody, yaml["cardTags"][i]);
+                AddTagInputGroup(tagsBody, tagsBodyParagraph, yaml["cardTags"][i]);
             }
         }
         /**
@@ -152,7 +152,7 @@ export class AddNoteFromMetadataModal extends Modal {
             if (tagsBody.firstChild == tagsBodyParagraph) {
                 tagsBody.removeChild(tagsBodyParagraph);
             }
-            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody);
+            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody, tagsBodyParagraph);
         });
 
         // Add the "Fields" section subtitle.

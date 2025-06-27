@@ -413,7 +413,7 @@ export function BuildTagsArray(): Array<string> {
  * @param {string} tagValue - Speaking for itself.
  * @return {HTMLDivElement} tagInputGroup
  */
-export function AddTagInputGroup(parent: HTMLElement, tagValue: string = null): HTMLDivElement {
+export function AddTagInputGroup(parent: HTMLElement, tagsBodyParagraph: HTMLElement, tagValue: string = null): HTMLDivElement {
     /**
      * @type {HTMLDivElement} inputGroup
      * @description A container storing the input field and the delete input field button.
@@ -457,6 +457,9 @@ export function AddTagInputGroup(parent: HTMLElement, tagValue: string = null): 
      */
     deleteTagInputButton.onClick(async () => {
         tagInputGroup.remove();
+        if (parent.children.length == 0) {
+            parent.appendChild(tagsBodyParagraph);
+        }
     })
 
     tagInput.focus();

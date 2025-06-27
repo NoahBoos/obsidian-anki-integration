@@ -145,7 +145,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
              * @type {HTMLDivElement} inputGroup
              * @description A container storing the input field and the delete input field button.
              */
-            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody);
+            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody, tagsBodyParagraph);
         });
 
         AddSubtitle(contentEl, "Fields");
@@ -168,7 +168,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
             this.AddFieldsGroupsToModal(inputContainer, value, codeBlockParameters);
         });
 
-        this.onOpenAsync(deckSelector, modelSelector, tagsBody, inputContainer);
+        this.onOpenAsync(deckSelector, modelSelector, tagsBody, tagsBodyParagraph, inputContainer);
 
         /**
          * @type {ButtonComponent} submitButtonEl
@@ -263,7 +263,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
      * @param {HTMLDivElement} tagsBody - Speaking for itself.
      * @param {HTMLDivElement} inputContainer - Speaking for itself.
      */
-    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, tagsBody: HTMLDivElement, inputContainer: HTMLDivElement): Promise<void> {
+    async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, tagsBody: HTMLDivElement, tagsBodyParagraph: HTMLElement, inputContainer: HTMLDivElement): Promise<void> {
         /**
          * @type {Object} codeBlockParameters
          * @description Stores the values parsed by GetCodeBlockParameters().
@@ -283,7 +283,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
                     tagsBody.removeChild(tagsBody.children[0]);
                 }
                 for (let i = 0; i < codeBlockParameters["tags"].length; i++) {
-                    AddTagInputGroup(tagsBody, codeBlockParameters["tags"][i]);
+                    AddTagInputGroup(tagsBody, tagsBodyParagraph, codeBlockParameters["tags"][i]);
                 }
             }
             AutoGenerateFields(this, modelSelector, inputContainer, codeBlockParameters);
