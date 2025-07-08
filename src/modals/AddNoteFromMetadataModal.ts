@@ -17,7 +17,7 @@ import {
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
-import {GenerateDeckSelector, GenerateModelSelector} from "./modalsUtils";
+import {GenerateDeckSelector, GenerateModelSelector, GenerateTagsSection} from "./modalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
@@ -91,38 +91,9 @@ export class AddNoteFromMetadataModal extends Modal {
 
         const modelSelector: DropdownComponent = GenerateModelSelector(dropdownContainer, ankiData);
 
-        /**
-         * @type {HTMLDivElement} tagsHeader
-         * @description A container serving as the head part of the tags section.
-         */
-        const tagsHeader: HTMLDivElement = AddContainer(contentEl, [
-            "ankiIntegrationModal__container--flex-row",
-            "ankiIntegrationModal__container--flex-align-center",
-            "ankiIntegrationModal__container--flex-justify-space-between",
-        ]);
-        AddSubtitle(tagsHeader, "Tags");
-        /**
-         * @type {ButtonComponent} addTagFieldButton
-         * @description Button used by the user to add a tag field in the pop-up.
-         */
-        let addTagFieldButton: ButtonComponent = AddButton(tagsHeader, "", "circle-plus");
-        addTagFieldButton.buttonEl.removeClasses([
-            "ankiIntegrationModal__button--default-width",
-            "ankiIntegrationModal__button--default-margin",
-            "ankiIntegrationModal__button--default-padding"
-        ]);
-        /**
-         * @type {HTMLDivElement} tagsBody
-         * @description A container serving as the body of the tags section.
-         */
-        const tagsBody: HTMLDivElement = AddContainer(contentEl);
-        tagsBody.addClasses([
-            "ankiIntegrationModal__container--flex-row",
-            "ankiIntegrationModal__container--flex-wrap",
-            "ankiIntegrationModal__container--gap-16px"
-        ]);
-
-        const tagsBodyParagraph: HTMLElement = AddParagraph(tagsBody, "No tags will be added to this note, click the \"+\" button to add a new one.");
+        const tagsContainer: HTMLDivElement = GenerateTagsSection(contentEl);
+        const tagsBody: HTMLDivElement = tagsContainer.querySelector('#tagsBody');
+        const tagsBodyParagraph: HTMLElement = tagsContainer.querySelector('#tagsBodyTip');
 
         if (yaml != null && yaml["cardTags"] != null) {
             tagsBody.removeChild(tagsBodyParagraph);
@@ -130,15 +101,6 @@ export class AddNoteFromMetadataModal extends Modal {
                 AddTagInputGroup(tagsBody, tagsBodyParagraph, yaml["cardTags"][i]);
             }
         }
-        /**
-         * @description addTagFieldButton's onClick() event listener used to add a tag input group in tagsBody.
-         */
-        addTagFieldButton.onClick(async () => {
-            if (tagsBody.firstChild == tagsBodyParagraph) {
-                tagsBody.removeChild(tagsBodyParagraph);
-            }
-            const tagInputGroup: HTMLDivElement = AddTagInputGroup(tagsBody, tagsBodyParagraph);
-        });
 
         // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
