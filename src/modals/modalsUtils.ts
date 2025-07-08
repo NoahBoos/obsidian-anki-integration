@@ -17,3 +17,20 @@ export function GenerateDeckSelector(parent: HTMLDivElement, ankiData: Object) {
 
     return deckSelector;
 }
+
+export function GenerateModelSelector(parent: HTMLDivElement, ankiData: Object) {
+    /**
+     * @type {DropdownComponent} modelSelector
+     * @description Dropdown allowing the user to select a model among those that are synchronized.
+     */
+    const modelSelector: DropdownComponent = AddDropdown(parent, "Choose a model");
+
+    /**
+     * @type {string[]} modelKeys
+     * @description An array containing the keys of all available models.
+     */
+    const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
+    AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
+
+    return modelSelector;
+}

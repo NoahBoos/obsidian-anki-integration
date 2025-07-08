@@ -19,7 +19,7 @@ import {
     ReadFileContent
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
-import {GenerateDeckSelector} from "./modalsUtils";
+import {GenerateDeckSelector, GenerateModelSelector} from "./modalsUtils";
 import {Drop} from "esbuild";
 
 /**
@@ -79,18 +79,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
 
         const deckSelector: DropdownComponent = GenerateDeckSelector(dropdownContainer, ankiData);
 
-        /**
-         * @type {DropdownComponent} modelSelector
-         * @description Dropdown allowing the user to select a model among those that are synchronized.
-         */
-        const modelSelector: DropdownComponent = AddDropdown(dropdownContainer, "Choose a model");
-
-        /**
-         * @type {string[]} modelKeys
-         * @description An array containing the keys of all available models.
-         */
-        const modelKeys: string[] = Object.keys(ankiData["modelsData"]);
-        AddOptionsToDropdownFromDataset(modelSelector, modelKeys, "name", "name", ankiData["modelsData"]);
+        const modelSelector: DropdownComponent = GenerateModelSelector(dropdownContainer, ankiData);
 
         /**
          * @type {HTMLDivElement} tagsHeader
