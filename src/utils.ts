@@ -2,6 +2,7 @@ import AnkiIntegration from "./main";
 import {ButtonComponent, DropdownComponent, Modal, TFile} from "obsidian";
 import {AddNoteFromMetadataModal} from "./modals/AddNoteFromMetadataModal";
 import {AddNoteFromCodeBlockModal} from "./modals/AddNoteFromCodeBlockModal";
+import {GenerateFieldGroups} from "./modals/modalsUtils";
 
 /**
  * Fetches a model that has been saved in data.json by SynchronizeData().
@@ -396,7 +397,7 @@ export function AutoGenerateFields(modal: AddNoteFromMetadataModal | AddNoteFrom
     if (!modelSelectorHasNoteParametersModel) {
         AddParagraph(inputContainer, "Select a model to see its fields.");
     } else {
-        modal.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), noteParameters);
+        GenerateFieldGroups(modal.plugin, inputContainer, modelSelector.getValue(), noteParameters);
     }
 }
 

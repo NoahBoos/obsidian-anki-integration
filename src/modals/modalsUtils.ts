@@ -1,15 +1,15 @@
-import {ButtonComponent, DropdownComponent, Modal} from "obsidian";
+import {ButtonComponent, DropdownComponent, FrontMatterCache, Modal} from "obsidian";
 import {
     AddButton,
     AddContainer,
-    AddDropdown,
+    AddDropdown, AddFieldGroups,
     AddOptionsToDropdownFromDataset,
     AddParagraph,
     AddSubtitle,
-    AddTagInputGroup, BuildTagsArray
+    AddTagInputGroup, BuildTagsArray, CreateFieldsGroupData, FetchModelByName
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
-import {Drop} from "esbuild";
+import AnkiIntegration from "../main";
 
 export function GenerateDeckSelector(parent: HTMLDivElement, ankiData: Object) {
     /**
@@ -134,4 +134,38 @@ export function GenerateSubmitButton(parent: HTMLElement, deckSelector: Dropdown
             await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, modal);
         }
     })
+}
+
+export function GenerateFieldGroups(plugin: AnkiIntegration, inputContainer: HTMLDivElement, selectedValue: any, inputValues:FrontMatterCache | Object | null) {
+    inputContainer.empty();
+
+    /**
+     * @type {Object} selectedModel
+     * @description The model object corresponding to the selected model name.
+     */
+    const selectedModel: Object = FetchModelByName(plugin, selectedValue);
+    /**
+     * @type {Array} fieldsGroupData
+     * @description An array of input data storing as separate object (1 object = 1 input) the keys used to create each label-input pair and the values of each input.
+     */
+    const fieldsGroupData: Array<Object> = [];
+
+    /**
+     * @description
+     * Checks the currently selected option of the dropdown.
+     * If its value is default, it displays a message requesting the user to select a model.
+     * Else, it means that a model is selected, therefore, it creates the fields groups data and displays them.
+     */
+    if (selectedValue === "default") {
+        AddParagraph(inputContainer, "Select a model to see its fields.");
+        return;
+    } else {
+        if (inputValues) {
+            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
+            AddFieldGroups(inputContainer, fieldsGroupData);
+        } else {
+            CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
+            AddFieldGroups(inputContainer, fieldsGroupData);
+        }
+    }
 }

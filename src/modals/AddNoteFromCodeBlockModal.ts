@@ -19,7 +19,13 @@ import {
     ReadFileContent
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
-import {GenerateDeckSelector, GenerateModelSelector, GenerateSubmitButton, GenerateTagsSection} from "./modalsUtils";
+import {
+    GenerateFieldGroups,
+    GenerateDeckSelector,
+    GenerateModelSelector,
+    GenerateSubmitButton,
+    GenerateTagsSection
+} from "./modalsUtils";
 import {Drop} from "esbuild";
 
 /**
@@ -102,7 +108,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
          */
         modelSelector.onChange(async (value) => {
             const codeBlockParameters = await this.GetCodeBlockParameters();
-            this.AddFieldsGroupsToModal(inputContainer, value, codeBlockParameters);
+            GenerateFieldGroups(this.plugin, inputContainer, value, codeBlockParameters);
         });
 
         this.onOpenAsync(deckSelector, modelSelector, tagsBody, tagsBodyParagraph, inputContainer);
@@ -126,47 +132,6 @@ export class AddNoteFromCodeBlockModal extends Modal {
     }
 
     /**
-     * Adds as many fields groups as the currently selected model has fields to the modal.
-     * @param {HTMLDivElement} inputContainer - DIV containing all the generated inputs.
-     * @param {any} selectedValue - Currently selected model select value of the modelSelector (DropdownComponent).
-     * @param {any} inputValues - The ??? of the currently active note.
-     */
-    AddFieldsGroupsToModal(inputContainer: HTMLDivElement, selectedValue: any, inputValues: any) {
-        /**
-         * @type {Object} selectedModel
-         * @description The model object corresponding to the selected model name.
-         */
-        const selectedModel: Object = FetchModelByName(this.plugin, selectedValue);
-        /**
-         * @type {Array} fieldsGroupData
-         * @description An array of input data storing as separate object (1 object = 1 input) the keys used to create each label-input pair and the values of each input.
-         */
-        const fieldsGroupData: Array<Object> = [];
-
-        inputContainer.empty();
-
-        /**
-         * @description
-         * Checks the currently selected option of the dropdown.
-         * If its value is default, it displays a message requesting the user to select a model.
-         * Else, it means that a model is selected, therefore, it creates the fields groups data and displays them.
-         */
-        if (selectedValue === "default") {
-            AddParagraph(inputContainer, "Select a model to see its fields.");
-            return;
-        } else {
-            if (inputValues) {
-                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
-                console.log(inputValues);
-                AddFieldGroups(inputContainer, fieldsGroupData);
-            } else {
-                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
-                AddFieldGroups(inputContainer, fieldsGroupData);
-            }
-        }
-    }
-
-    /**
      * onOpen() async equivalent allowing asynchronous operations.
      * @param {DropdownComponent} deckSelector - Dropdown component that allows the user to select a deck.
      * @param {DropdownComponent} modelSelector - Dropdown component that allows the user to select a model.
@@ -181,7 +146,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
         const codeBlockParameters: Object = await this.GetCodeBlockParameters();
         // console.log(codeBlockParameters);
         if (!codeBlockParameters) {
-            this.AddFieldsGroupsToModal(inputContainer, modelSelector.getValue(), null);
+            GenerateFieldGroups(this.plugin, inputContainer, modelSelector.getValue(), null);
         } else {
             /**
              * @description Functions called to pre-select and pre-fill both dropdowns and input fields.

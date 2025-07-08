@@ -17,7 +17,13 @@ import {
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
-import {GenerateDeckSelector, GenerateModelSelector, GenerateSubmitButton, GenerateTagsSection} from "./modalsUtils";
+import {
+    GenerateFieldGroups,
+    GenerateDeckSelector,
+    GenerateModelSelector,
+    GenerateSubmitButton,
+    GenerateTagsSection
+} from "./modalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
@@ -119,7 +125,7 @@ export class AddNoteFromMetadataModal extends Modal {
          * @param {string} value - The selected model name.
          */
         modelSelector.onChange(async (value) => {
-            this.AddFieldsGroupsToModal(inputContainer, value, yaml);
+            GenerateFieldGroups(this.plugin, inputContainer, value, yaml);
         });
 
         /**
@@ -149,45 +155,5 @@ export class AddNoteFromMetadataModal extends Modal {
 
         // Clear the content of the modal.
         contentEl.empty();
-    }
-
-    /**
-     * Adds as many fields groups as the currently selected model has fields to the modal.
-     * @param {HTMLDivElement} inputContainer - DIV containing all the generated inputs.
-     * @param {any} selectedValue - Currently selected model select value of the modelSelector (DropdownComponent).
-     * @param {FrontMatterCache} inputValues - The YAML metadata of the currently active note.
-     */
-    AddFieldsGroupsToModal(inputContainer: HTMLDivElement, selectedValue: any, inputValues: FrontMatterCache) {
-        inputContainer.empty();
-
-        /**
-         * @type {Object} selectedModel
-         * @description The model object corresponding to the selected model name.
-         */
-        const selectedModel: Object = FetchModelByName(this.plugin, selectedValue);
-        /**
-         * @type {Array} fieldsGroupData
-         * @description An array of input data storing as separate object (1 object = 1 input) the keys used to create each label-input pair and the values of each input.
-         */
-        const fieldsGroupData: Array<Object> = [];
-
-        /**
-         * @description
-         * Checks the currently selected option of the dropdown.
-         * If its value is default, it displays a message requesting the user to select a model.
-         * Else, it means that a model is selected, therefore, it creates the fields groups data and displays them.
-         */
-        if (selectedValue === "default") {
-            AddParagraph(inputContainer, "Select a model to see its fields.");
-            return;
-        } else {
-            if (inputValues) {
-                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"], inputValues);
-                AddFieldGroups(inputContainer, fieldsGroupData);
-            } else {
-                CreateFieldsGroupData(fieldsGroupData, selectedModel["fields"]);
-                AddFieldGroups(inputContainer, fieldsGroupData);
-            }
-        }
     }
 }
