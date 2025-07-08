@@ -19,7 +19,7 @@ import {
     ReadFileContent
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
-import {GenerateDeckSelector, GenerateModelSelector, GenerateTagsSection} from "./modalsUtils";
+import {GenerateDeckSelector, GenerateModelSelector, GenerateSubmitButton, GenerateTagsSection} from "./modalsUtils";
 import {Drop} from "esbuild";
 
 /**
@@ -107,34 +107,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
 
         this.onOpenAsync(deckSelector, modelSelector, tagsBody, tagsBodyParagraph, inputContainer);
 
-        /**
-         * @type {ButtonComponent} submitButtonEl
-         * @description Submit button for the user to add the note.
-         */
-        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create Note");
-
-        /**
-         * @description
-         * "Click" event handler to send the form and trigger ProcessAddNote().
-         * @async
-         * @param {MouseEvent} event - The click event triggered by the submit button.
-         */
-        submitButtonEl.onClick(async () => {
-            const tags: Array<string> = BuildTagsArray();
-            await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
-        });
-        /**
-         * @description
-         * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessAddNote().
-         * @async
-         * @param {KeyboardEvent} event - The registered keys that are pressed when contentEl is open.
-         */
-        this.contentEl.addEventListener("keydown", async (event) => {
-            if (event.shiftKey && event.key === "Enter") {
-                const tags: Array<string> = BuildTagsArray();
-                await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
-            }
-        })
+        GenerateSubmitButton(contentEl, deckSelector, modelSelector, inputContainer, this);
     }
 
     /**

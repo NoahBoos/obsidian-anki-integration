@@ -1,4 +1,4 @@
-import {ButtonComponent, DropdownComponent} from "obsidian";
+import {ButtonComponent, DropdownComponent, Modal} from "obsidian";
 import {
     AddButton,
     AddContainer,
@@ -6,8 +6,10 @@ import {
     AddOptionsToDropdownFromDataset,
     AddParagraph,
     AddSubtitle,
-    AddTagInputGroup
+    AddTagInputGroup, BuildTagsArray
 } from "../utils";
+import {ProcessAddNote} from "../AnkiConnect";
+import {Drop} from "esbuild";
 
 export function GenerateDeckSelector(parent: HTMLDivElement, ankiData: Object) {
     /**
@@ -101,4 +103,35 @@ export function GenerateTagsSection(parent: HTMLElement) {
     });
 
     return tagsContainer;
+}
+
+export function GenerateSubmitButton(parent: HTMLElement, deckSelector: DropdownComponent, modelSelector: DropdownComponent, inputContainer: HTMLDivElement, modal: Modal) {
+    /**
+     * @type {ButtonComponent} submitButtonEl
+     * @description Submit button for the user to add the note.
+     */
+    const submitButtonEl: ButtonComponent = AddButton(parent, "Create Note");
+
+    /**
+     * @description
+     * "Click" event handler to send the form and trigger ProcessAddNote().
+     * @async
+     * @param {MouseEvent} event - The click event triggered by the submit button.
+     */
+    submitButtonEl.onClick(async () => {
+        const tags: Array<string> = BuildTagsArray();
+        await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, modal);
+    });
+    /**
+     * @description
+     * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessAddNote().
+     * @async
+     * @param {KeyboardEvent} event - The registered keys that are pressed when contentEl is open.
+     */
+    parent.addEventListener("keydown", async (event) => {
+        if (event.shiftKey && event.key === "Enter") {
+            const tags: Array<string> = BuildTagsArray();
+            await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, modal);
+        }
+    })
 }

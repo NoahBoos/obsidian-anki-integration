@@ -17,7 +17,7 @@ import {
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
-import {GenerateDeckSelector, GenerateModelSelector, GenerateTagsSection} from "./modalsUtils";
+import {GenerateDeckSelector, GenerateModelSelector, GenerateSubmitButton, GenerateTagsSection} from "./modalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
@@ -133,34 +133,7 @@ export class AddNoteFromMetadataModal extends Modal {
             AddParagraph(inputContainer, "Select a model to see its fields.");
         }
 
-        /**
-         * @type {ButtonComponent} submitButtonEl
-         * @description Submit button for the user to add the note.
-         */
-        const submitButtonEl: ButtonComponent = AddButton(contentEl, "Create Note");
-
-        /**
-         * @description
-         * "Click" event handler to send the form and trigger ProcessAddNote().
-         * @async
-         * @param {MouseEvent} event - The click event triggered by the submit button.
-         */
-        submitButtonEl.onClick(async () => {
-            const tags: Array<string> = BuildTagsArray();
-            await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
-        });
-        /**
-         * @description
-         * "SHIFT + ENTER" event shortcut handler to send the form and trigger ProcessAddNote().
-         * @async
-         * @param {KeyboardEvent} event - The registered keys that are pressed when contentEl is open.
-         */
-        this.contentEl.addEventListener("keydown", async (event) => {
-        if (event.shiftKey && event.key === "Enter") {
-                const tags: Array<string> = BuildTagsArray();
-                await ProcessAddNote(deckSelector, modelSelector, inputContainer, tags, this);
-            }
-        })
+        GenerateSubmitButton(contentEl, deckSelector, modelSelector, inputContainer, this);
     }
 
     /**
