@@ -17,6 +17,7 @@ import {
     AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
     FetchModelByName
 } from "../utils";
+import {GenerateDeckSelector} from "./modalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
@@ -86,15 +87,7 @@ export class AddNoteFromMetadataModal extends Modal {
             "ankiIntegrationModal__dropdownContainer--flex"
         ]);
 
-        // Create and configure the deck selector dropdown.
-        const deckSelector = AddDropdown(dropdownContainer, "Choose a deck");
-
-        /**
-         * @type {string[]} deckKeys
-         * @description An array containing the keys of all available decks.
-         */
-        const deckKeys: string[] = Object.keys(ankiData["decksData"]);
-        AddOptionsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
+        const deckSelector = GenerateDeckSelector(dropdownContainer, ankiData);
 
         // Create and configure the model selector dropdown.
         const modelSelector = AddDropdown(dropdownContainer, "Choose a model");

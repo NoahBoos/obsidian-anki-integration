@@ -19,6 +19,8 @@ import {
     ReadFileContent
 } from "../utils";
 import {ProcessAddNote} from "../AnkiConnect";
+import {GenerateDeckSelector} from "./modalsUtils";
+import {Drop} from "esbuild";
 
 /**
  * A modal dialog for creating a new Anki note by using a code block content as pre-filled values.
@@ -75,18 +77,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
             "ankiIntegrationModal__dropdownContainer--flex"
         ])
 
-        /**
-         * @type {DropdownComponent} deckSelector
-         * @description Dropdown allowing the user to select a deck among those that are synchronized.
-         */
-        const deckSelector: DropdownComponent = AddDropdown(dropdownContainer, "Choose a deck");
-
-        /**
-         * @type {string[]} deckKeys
-         * @description An array containing the keys of all available decks.
-         */
-        const deckKeys: string[] = Object.keys(ankiData["decksData"]);
-        AddOptionsToDropdownFromDataset(deckSelector, deckKeys, "name", "name", ankiData["decksData"]);
+        const deckSelector: DropdownComponent = GenerateDeckSelector(dropdownContainer, ankiData);
 
         /**
          * @type {DropdownComponent} modelSelector
