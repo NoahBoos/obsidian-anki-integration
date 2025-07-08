@@ -28,7 +28,7 @@ export function FetchModelByName(plugin: AnkiIntegration, name: string): Object 
  * @param {string[]} classes - An array of strings containing CSS classes to add to the created element.
  * @return {HTMLDivElement} createdEl - The created container.
  */
-export function AddContainer(parent: HTMLElement, classes: string[] = []): HTMLDivElement {
+export function AddContainer(parent: HTMLElement, classes: string[] = [], id: string = null): HTMLDivElement {
     /**
      * @remarks
      * Pushes into classes all CSS classes that are mandatory for a container.
@@ -44,6 +44,9 @@ export function AddContainer(parent: HTMLElement, classes: string[] = []): HTMLD
             classes.join(" ")
         ]
     });
+    if (id) {
+        createdEl.id = id;
+    }
     return createdEl;
 }
 
@@ -111,9 +114,10 @@ export function AddSubtitle(parent: HTMLElement, subtitle: string, classes: stri
  * @param {HTMLElement} parent - The parent container to which the paragraph will be added.
  * @param {string} text - A string containing the text that needs to be displayed.
  * @param {string[]} classes - An array of strings containing CSS classes to add to the created element.
+ * @param id
  * @return {HTMLElement} createdEl - The created paragraph.
  */
-export function AddParagraph(parent: HTMLElement, text: string, classes: string[] = []): HTMLElement {
+export function AddParagraph(parent: HTMLElement, text: string, classes: string[] = [], id: string = null): HTMLElement {
     /**
      * @remarks
      * Pushes into classes all CSS classes that are mandatory for a container.
@@ -133,6 +137,9 @@ export function AddParagraph(parent: HTMLElement, text: string, classes: string[
             classes.join(" ")
         ]
     });
+    if (id) {
+        createdEl.id = id;
+    }
     return createdEl;
 }
 
