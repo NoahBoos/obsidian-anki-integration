@@ -1,29 +1,28 @@
 import {
-    App, ButtonComponent, DropdownComponent, FrontMatterCache,
+    App,
+    DropdownComponent,
+    FrontMatterCache,
     Modal,
     TFile
 } from "obsidian";
 import AnkiIntegration from "../main";
 import {
-    ProcessAddNote
-} from "../AnkiConnect";
-import {
-    AddButton,
     AddContainer,
-    AddDropdown, AddFieldGroups, AddInput,
-    AddOptionsToDropdownFromDataset,
     AddParagraph,
-    AddSubtitle, AddTagInputGroup,
-    AddTitle, AutoAssignDeck, AutoAssignModel, AutoGenerateFields, BuildTagsArray, CreateFieldsGroupData,
-    FetchModelByName
+    AddSubtitle,
+    AddTitle
 } from "../utils";
 import {
     GenerateFieldGroups,
-    GenerateDeckSelector,
-    GenerateModelSelector,
-    GenerateSubmitButton,
-    GenerateTagsSection
-} from "./modalsUtils";
+    AddDeckSelector,
+    AddModelSelector,
+    AddSubmitButton,
+    AddTagsSection,
+    AutoAssignDeck,
+    AutoAssignModel,
+    AutoGenerateFields,
+    AddTagInputGroup
+} from "./addNoteModalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using metadata as pre-filled values.
@@ -43,13 +42,6 @@ export class AddNoteFromMetadataModal extends Modal {
      */
     plugin: AnkiIntegration;
 
-    /**
-     * Creates a new AddNoteFromMetadataModal instance.
-     * Initializes the modal with the provided app and plugin.
-     * @param {App} app - The Obsidian app instance.
-     * @param {AnkiIntegration} plugin - The AnkiIntegration plugin instance.
-     * @constructor
-     */
     constructor(app: App, plugin: AnkiIntegration) {
         super(app);
         this.plugin = plugin;
@@ -62,10 +54,6 @@ export class AddNoteFromMetadataModal extends Modal {
          */
         const ankiData: Object = this.plugin.settings.ankiData;
 
-        /**
-         * @type {HTMLElement} contentEl
-         * @description The main content container of the modal.
-         */
         const { contentEl } = this;
         this.contentEl.focus();
 
@@ -81,23 +69,13 @@ export class AddNoteFromMetadataModal extends Modal {
             yaml = this.app.metadataCache.getFileCache(activeFileData).frontmatter;
         }
 
-        // Add the title and subtitle to the modal.
         AddTitle(contentEl, "Add a new note using metadata");
         AddSubtitle(contentEl, "Deck & Model");
 
-        /**
-         * @type {HTMLDivElement} dropdownContainer
-         * @description Container for the deck and model dropdown selectors.
-         */
-        const dropdownContainer: HTMLDivElement = AddContainer(contentEl, [
-            "ankiIntegrationModal__dropdownContainer--flex"
-        ]);
-
-        const deckSelector = GenerateDeckSelector(dropdownContainer, ankiData);
-
-        const modelSelector: DropdownComponent = GenerateModelSelector(dropdownContainer, ankiData);
-
-        const tagsContainer: HTMLDivElement = GenerateTagsSection(contentEl);
+        const dropdownContainer: HTMLDivElement = AddContainer(contentEl, ["ankiIntegrationModal__dropdownContainer--flex"]);
+        const deckSelector: DropdownComponent = AddDeckSelector(dropdownContainer, ankiData);
+        const modelSelector: DropdownComponent = AddModelSelector(dropdownContainer, ankiData);
+        const tagsContainer: HTMLDivElement = AddTagsSection(contentEl);
         const tagsBody: HTMLDivElement = tagsContainer.querySelector('#tagsBody');
         const tagsBodyParagraph: HTMLElement = tagsContainer.querySelector('#tagsBodyTip');
 
@@ -108,38 +86,22 @@ export class AddNoteFromMetadataModal extends Modal {
             }
         }
 
-        // Add the "Fields" section subtitle.
         AddSubtitle(contentEl, "Fields");
+        const inputFieldsContainer: HTMLDivElement = AddContainer(contentEl, ["ankiIntegrationModal__inputContainer--flex"]);
 
-        /**
-         * @type {HTMLDivElement} inputContainer
-         * @description Container for dynamically generated input fields based on the selected model.
-         */
-        const inputContainer: HTMLDivElement = AddContainer(contentEl, [
-            "ankiIntegrationModal__inputContainer--flex"
-        ]);
-
-        /**
-         * Event listener triggered when the model selector value changes.
-         * Updates the inputContainer with the fields corresponding to the selected model.
-         * @param {string} value - The selected model name.
-         */
         modelSelector.onChange(async (value) => {
-            GenerateFieldGroups(this.plugin, inputContainer, value, yaml);
+            GenerateFieldGroups(this.plugin, inputFieldsContainer, value, yaml);
         });
 
-        /**
-         * @description If yaml isn't null, trigger the autofill functions. Else, display the "Select a model [...]" message.
-         */
         if (yaml != null) {
             AutoAssignDeck(deckSelector, yaml);
             AutoAssignModel(modelSelector, yaml);
-            AutoGenerateFields(this, modelSelector, inputContainer, yaml);
+            AutoGenerateFields(this, modelSelector, inputFieldsContainer, yaml);
         } else {
-            AddParagraph(inputContainer, "Select a model to see its fields.");
+            AddParagraph(inputFieldsContainer, "Select a model to see its fields.");
         }
 
-        GenerateSubmitButton(contentEl, deckSelector, modelSelector, inputContainer, this);
+        AddSubmitButton(contentEl, deckSelector, modelSelector, inputFieldsContainer, this);
     }
 
     /**
@@ -147,13 +109,7 @@ export class AddNoteFromMetadataModal extends Modal {
      * Removes all elements within the modal's content area.
      */
     onClose() {
-        /**
-         * @type {HTMLElement} contentEl
-         * @description The main content container of the modal.
-         */
         const { contentEl } = this;
-
-        // Clear the content of the modal.
         contentEl.empty();
     }
 }

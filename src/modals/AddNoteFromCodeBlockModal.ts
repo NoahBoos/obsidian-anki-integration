@@ -1,32 +1,26 @@
-import {App, ButtonComponent, DropdownComponent, Modal, TFile} from "obsidian";
+import {
+    App,
+    DropdownComponent,
+    Modal,
+    TFile
+} from "obsidian";
 import AnkiIntegration from "../main";
 import {
-    AddButton,
     AddContainer,
-    AddDropdown,
-    AddFieldGroups,
-    AddInput,
-    AddOptionsToDropdownFromDataset,
-    AddParagraph,
-    AddSubtitle, AddTagInputGroup,
-    AddTitle,
+    AddSubtitle,
+    AddTitle
+} from "../utils";
+import {
+    GenerateFieldGroups,
+    AddDeckSelector,
+    AddModelSelector,
+    AddSubmitButton,
+    AddTagsSection,
     AutoAssignDeck,
     AutoAssignModel,
     AutoGenerateFields,
-    BuildTagsArray,
-    CreateFieldsGroupData,
-    FetchModelByName,
-    ReadFileContent
-} from "../utils";
-import {ProcessAddNote} from "../AnkiConnect";
-import {
-    GenerateFieldGroups,
-    GenerateDeckSelector,
-    GenerateModelSelector,
-    GenerateSubmitButton,
-    GenerateTagsSection
-} from "./modalsUtils";
-import {Drop} from "esbuild";
+    AddTagInputGroup
+} from "./addNoteModalsUtils";
 
 /**
  * A modal dialog for creating a new Anki note by using a code block content as pre-filled values.
@@ -46,13 +40,6 @@ export class AddNoteFromCodeBlockModal extends Modal {
      */
     plugin: AnkiIntegration;
 
-    /**
-     * Creates a new AddNoteFromCodeBlockModal instance.
-     * Initializes the modal with provided app and plugin.
-     * @param {App} app - The Obsidian app instance.
-     * @param {AnkiIntegration} plugin - The AnkiIntegration plugin instance.
-     * @constructor
-     */
     constructor(app: App, plugin: AnkiIntegration) {
         super(app);
         this.plugin = plugin;
@@ -65,55 +52,30 @@ export class AddNoteFromCodeBlockModal extends Modal {
          */
         const ankiData: Object = this.plugin.settings.ankiData;
 
-        /**
-         * @type {HTMLElement} contentEl
-         * @description The main content container of the modal.
-         */
         const { contentEl } = this;
         this.contentEl.focus();
 
         AddTitle(contentEl, "Add a new note using code block");
         AddSubtitle(contentEl, "Deck & Model");
 
-        /**
-         * @type {HTMLDivElement} dropdownContainer
-         * @description Container for the deck and model dropdown selectors.
-         */
-        const dropdownContainer: HTMLDivElement = AddContainer(contentEl, [
-            "ankiIntegrationModal__dropdownContainer--flex"
-        ])
-
-        const deckSelector: DropdownComponent = GenerateDeckSelector(dropdownContainer, ankiData);
-
-        const modelSelector: DropdownComponent = GenerateModelSelector(dropdownContainer, ankiData);
-
-        const tagsContainer: HTMLDivElement = GenerateTagsSection(contentEl);
+        const dropdownContainer: HTMLDivElement = AddContainer(contentEl, ["ankiIntegrationModal__dropdownContainer--flex"])
+        const deckSelector: DropdownComponent = AddDeckSelector(dropdownContainer, ankiData);
+        const modelSelector: DropdownComponent = AddModelSelector(dropdownContainer, ankiData);
+        const tagsContainer: HTMLDivElement = AddTagsSection(contentEl);
         const tagsBody: HTMLDivElement = tagsContainer.querySelector('#tagsBody');
         const tagsBodyParagraph: HTMLElement = tagsContainer.querySelector('#tagsBodyTip');
 
         AddSubtitle(contentEl, "Fields");
+        const inputFieldsContainer: HTMLDivElement = AddContainer(contentEl, ["ankiIntegrationModal__inputContainer--flex"]);
 
-        /**
-         * @type {HTMLDivElement} inputContainer
-         * @description Container for dynamically generated input fields based on the selected model.
-         */
-        const inputContainer: HTMLDivElement = AddContainer(contentEl, [
-            "ankiIntegrationModal__inputContainer--flex"
-        ]);
-
-        /**
-         * Event listener triggered when the model selector value changes.
-         * Updates the inputContainer with the fields corresponding to the selected model.
-         * @param {string} value - The selected model name.
-         */
         modelSelector.onChange(async (value) => {
             const codeBlockParameters = await this.GetCodeBlockParameters();
-            GenerateFieldGroups(this.plugin, inputContainer, value, codeBlockParameters);
+            GenerateFieldGroups(this.plugin, inputFieldsContainer, value, codeBlockParameters);
         });
 
-        this.onOpenAsync(deckSelector, modelSelector, tagsBody, tagsBodyParagraph, inputContainer);
+        this.onOpenAsync(deckSelector, modelSelector, tagsBody, tagsBodyParagraph, inputFieldsContainer);
 
-        GenerateSubmitButton(contentEl, deckSelector, modelSelector, inputContainer, this);
+        AddSubmitButton(contentEl, deckSelector, modelSelector, inputFieldsContainer, this);
     }
 
     /**
@@ -121,13 +83,7 @@ export class AddNoteFromCodeBlockModal extends Modal {
      * Removes all elements within the modal's content area.
      */
     onClose() {
-        /**
-         * @type {HTMLElement} contentEl
-         * @description The main content container of the modal.
-         */
         const { contentEl } = this;
-
-        // Clear the content of the modal.
         contentEl.empty();
     }
 
@@ -139,18 +95,10 @@ export class AddNoteFromCodeBlockModal extends Modal {
      * @param {HTMLDivElement} inputContainer - Speaking for itself.
      */
     async onOpenAsync(deckSelector: DropdownComponent, modelSelector: DropdownComponent, tagsBody: HTMLDivElement, tagsBodyParagraph: HTMLElement, inputContainer: HTMLDivElement): Promise<void> {
-        /**
-         * @type {Object} codeBlockParameters
-         * @description Stores the values parsed by GetCodeBlockParameters().
-         */
         const codeBlockParameters: Object = await this.GetCodeBlockParameters();
-        // console.log(codeBlockParameters);
         if (!codeBlockParameters) {
             GenerateFieldGroups(this.plugin, inputContainer, modelSelector.getValue(), null);
         } else {
-            /**
-             * @description Functions called to pre-select and pre-fill both dropdowns and input fields.
-             */
             AutoAssignDeck(deckSelector, codeBlockParameters);
             AutoAssignModel(modelSelector, codeBlockParameters);
             if (codeBlockParameters["tags"] != null) {
@@ -173,35 +121,12 @@ export class AddNoteFromCodeBlockModal extends Modal {
      * @return {Object} codeBlockParameters
      */
     async GetCodeBlockParameters(): Promise<Object> {
-        /**
-         * @type {TFile} activeFileData
-         * @description The open and active file in the current instance of Obsidian.
-         * @remarks Since we can't retrieve a code block if no file is opened, if activeFileData is null, we shut down the function.
-         */
         const activeFileData: TFile = this.app.workspace.getActiveFile();
-        if (!activeFileData) {
-            return;
-        }
-        /**
-         * @type {string} activeFileContent
-         * @description The whole content of the note.
-         */
-        const activeFileContent: string = await ReadFileContent(this, activeFileData);
-        /**
-         * @type {string} codeBlock
-         * @description The first code block using "AnkiIntegration" as its language in activeFileContent.
-         */
+        if (!activeFileData) return;
+        const activeFileContent: string = await this.app.vault.read(activeFileData);
         const codeBlock: string = activeFileContent.match(/(```AnkiIntegration[\s\S]*?```)/)[1];
-        /**
-         * @type {RegExp} regex
-         * @description A regular expression that is used to retrieve each line of the code block using a "Key: Value;" or "Key: "Value";" format.
-         */
-        const regex: RegExp = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
-        /**
-         * @type {RegExp} tagsRegex
-         * @description A regular expression used to retrieve tags from the extracted corresponding line.
-         */
-        const tagsRegex: RegExp = /"([^"]+)"/g;
+        const retrieveLinesRegex: RegExp = /^\s*(\w+):\s*(?:"([^"]+)"|([^;]+));/gm;
+        const retrieveTagsRegex: RegExp = /"([^"]+)"/g;
         /**
          * @type {Object} codeBlockParameters
          * @description The object that stores all the fields of the note that has to be created, along with their values.
@@ -211,43 +136,20 @@ export class AddNoteFromCodeBlockModal extends Modal {
             "fields": {},
             "tags": {}
         };
-        /**
-         * @type {Array} match
-         * @description Stores all the result of regex.exec(codeBlock).
-         */
         let match: Array<string> = []
-        /**
-         * @description As long as there are string that match the regex,
-         * we add them as field of codeBlockParameters or as field of codeBlockParameters["fields"].
-         */
-        while ((match = regex.exec(codeBlock)) !== null) {
-            /**
-             * @type {Array<string>} codeBlockFields
-             * @description All the fields that has to be added as direct child fields of codeBlockParameters.
-             */
-            const codeBlockChildFields: Array<string> = ["deck", "model", "tags"];
-            /**
-             * @type {string} key
-             * @description The key of the item that will be added to codeBlockParameters.
-             */
+        while ((match = retrieveLinesRegex.exec(codeBlock)) !== null) {
+            const noteChildAttributes: Array<string> = ["deck", "model", "tags"];
             const key: string = match[1];
-            /**
-             * @type {string} value
-             * @description The value of the item that will be added to codeBlockParameters.
-             */
             const value: string = match[2] || match[3];
-            /**
-             * @description If/else statements allowing to add a value as a direct child of codeBlockParameters or as a direct child of codeBlockParameters["fields"].
-             */
-            if (codeBlockChildFields.includes(key)) {
-                if (key == "tags") {
-                    codeBlockParameters[key] = [];
-                    while ((match = tagsRegex.exec(value)) !== null) {
+            const isKeyATag: boolean = key === "tags";
+            const isKeyANoteChildAttribute: boolean = noteChildAttributes.includes(key);
+            if (isKeyANoteChildAttribute) {
+                codeBlockParameters[key] = isKeyATag ? [] : value;
+                if (isKeyATag) {
+                    while ((match = retrieveTagsRegex.exec(value)) !== null) {
                         const tag = match[1];
                         codeBlockParameters[key].push(tag);
                     }
-                } else {
-                    codeBlockParameters[key] = value;
                 }
             } else {
                 codeBlockParameters["fields"][key.toLowerCase()] = value;
